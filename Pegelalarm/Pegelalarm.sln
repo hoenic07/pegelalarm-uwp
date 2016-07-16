@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pegelalarm", "Pegelalarm\Pegelalarm.csproj", "{74C0919E-2959-4E2B-A576-0EA49826940C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pegelalarm.Core", "Pegelalarm.Core\Pegelalarm.Core.csproj", "{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM = Debug|ARM
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|ARM = Release|ARM
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Debug|ARM.ActiveCfg = Debug|ARM
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Debug|ARM.Build.0 = Debug|ARM
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Debug|ARM.Deploy.0 = Debug|ARM
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Debug|x64.ActiveCfg = Debug|x64
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Debug|x64.Build.0 = Debug|x64
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Debug|x64.Deploy.0 = Debug|x64
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Debug|x86.ActiveCfg = Debug|x86
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Debug|x86.Build.0 = Debug|x86
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Debug|x86.Deploy.0 = Debug|x86
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Release|Any CPU.ActiveCfg = Release|x86
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Release|ARM.ActiveCfg = Release|ARM
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Release|ARM.Build.0 = Release|ARM
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Release|ARM.Deploy.0 = Release|ARM
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Release|x64.ActiveCfg = Release|x64
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Release|x64.Build.0 = Release|x64
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Release|x64.Deploy.0 = Release|x64
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Release|x86.ActiveCfg = Release|x86
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Release|x86.Build.0 = Release|x86
+		{74C0919E-2959-4E2B-A576-0EA49826940C}.Release|x86.Deploy.0 = Release|x86
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Debug|ARM.ActiveCfg = Debug|ARM
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Debug|ARM.Build.0 = Debug|ARM
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Debug|x64.ActiveCfg = Debug|x64
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Debug|x64.Build.0 = Debug|x64
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Debug|x86.ActiveCfg = Debug|x86
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Debug|x86.Build.0 = Debug|x86
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Release|ARM.ActiveCfg = Release|ARM
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Release|ARM.Build.0 = Release|ARM
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Release|x64.ActiveCfg = Release|x64
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Release|x64.Build.0 = Release|x64
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Release|x86.ActiveCfg = Release|x86
+		{9D9FB78D-ECEB-4240-9E47-D0751BBADD40}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
