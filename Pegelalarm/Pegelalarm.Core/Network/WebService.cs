@@ -19,7 +19,7 @@ namespace Pegelalarm.Core.Network
         /// <summary>
         /// Please visit pegelalarm.at to get this url
         /// </summary>
-        private const string SERVER = "...";
+        private const string SERVER = ApiConstants.BASE_URI;
         private const string LIST_ENDPOINT = "station/1.0/list?";
         private const string HISTORY_ENDPOINT = "";
 
