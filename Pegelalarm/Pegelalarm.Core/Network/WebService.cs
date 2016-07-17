@@ -15,7 +15,11 @@ namespace Pegelalarm.Core.Network
 {
     public class WebService
     {
-        private const string SERVER = "http://api.pegelalarm.at/api/";
+
+        /// <summary>
+        /// Please visit pegelalarm.at to get this url
+        /// </summary>
+        private const string SERVER = "...";
         private const string LIST_ENDPOINT = "station/1.0/list?";
         private const string HISTORY_ENDPOINT = "";
 
