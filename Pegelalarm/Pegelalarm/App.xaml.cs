@@ -35,6 +35,7 @@ namespace Pegelalarm
             container = new WinRTContainer();
             container.RegisterWinRTServices();
             container.Singleton<MainViewModel>();
+            container.PerRequest<DetailViewModel>();
             container.Singleton<WebService>();
         }
 

@@ -7,66 +7,138 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
     xmlns:cal="using:Caliburn.Micro"
-    mc:Ignorable="d" RequestedTheme="Dark">
+    mc:Ignorable="d" RequestedTheme="Light">
+
+    <Page.Resources>
+
+        <DataTemplate x:Key="StationTemplate">
+            <Grid Margin="6,12" cal:Message.Attach="[Event Tapped]=[Action ShowDetail($dataContext)]" Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/> <!--Color-->
+                    <ColumnDefinition Width="*"/> <!--Name / Situation-->
+                    <ColumnDefinition Width="Auto"/> <!--Height / Trend-->
+                    <ColumnDefinition Width="Auto"/> <!--Fav-->
+                </Grid.ColumnDefinitions>
+                <Rectangle Width="10" Height="30" Fill="{Binding SituationColor}"/>
+
+                <TextBlock Grid.Column="1" Margin="12,0">
+                    <Bold><Run Text="{Binding Data.name}" /></Bold>
+                    <LineBreak/>
+                    <Run Text="{Binding SituationString}" FontSize="12"/>
+                </TextBlock>
+
+                <StackPanel Grid.Column="2" Orientation="Vertical">
+                    <ItemsControl ItemsSource="{Binding Data.data}" HorizontalAlignment="Right">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock TextAlignment="Right">
+                                    <Run Text="{Binding value}"/> <Run Text="{Binding type}"/>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Text="{Binding TrendString}" TextAlignment="Right"/>
+                </StackPanel>
+
+                <!--<SymbolIcon Grid.Column="3" Symbol="Favorite" cal:Message.Attach="[Event Tapped]=[Action Monitor]" Visibility="{Binding IsFavorite, Converter={StaticResource BooleanVisibilityConverter}, ConverterParameter='invert'}"/>-->
+                <!--<SymbolIcon Grid.Column="3" Symbol="UnFavorite" cal:Message.Attach="[Event Tapped]=[Action UnMonitor]" Visibility="{Binding IsFavorite, Converter={StaticResource BooleanVisibilityConverter}}"/>-->
+                
+            </Grid>
+        </DataTemplate>
+        
+    </Page.Resources>
 
     <SplitView x:Name="SplitView" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                OpenPaneLength="300" DisplayMode="Inline">
         <SplitView.Pane>
-            <Grid Background="{StaticResource BlueBrush}" Padding="12">
+            <Grid Background="{StaticResource BlueBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBox PlaceholderText="Suche..."/>
 
-                <TextBlock Text="Liste der Stationen" Grid.Row="1" Margin="0,12,0,12"/>
-                <TextBlock Text="Überwachte Stationen" Grid.Row="2"/>
+                <ListView Grid.Row="0">
+                    <Grid cal:Message.Attach="[Event Tapped]=[Action Show(0)]" Background="Transparent">
+                        <TextBlock Text="Karte anzeigen" />
+                    </Grid>
+                    <Grid cal:Message.Attach="[Event Tapped]=[Action Show(1)]" Background="Transparent">
+                        <TextBlock Text="Liste der Stationen" Grid.Row="1" Margin="0,12,0,12"/>
+                    </Grid>
+                    <Grid cal:Message.Attach="[Event Tapped]=[Action Show(1)]" Background="Transparent">
+                        <TextBlock Text="Überwachte Stationen" Grid.Row="2"/>
+                    </Grid>
+                </ListView>
+                
+                <Rectangle Height="2" Grid.Row="1" Margin="12" Fill="{StaticResource ApplicationForegroundThemeBrush}"/>
 
-                <Rectangle Height="2" Grid.Row="3" Margin="0,12" Fill="White"/>
-
-                <StackPanel Orientation="Vertical" Grid.Row="4">
-                    <TextBlock FontSize="12">
+                <StackPanel Orientation="Vertical" Grid.Row="2" Margin="12">
+                    <TextBlock TextWrapping="WrapWholeWords">
                         <Run Text="Radius der angezeigten Stationen: "/><Run Text="{Binding DisplayRange, FallbackValue='0'}"/><Run Text="km"/>
                     </TextBlock>
                     <Slider Minimum="5" Maximum="150" Value="{Binding DisplayRange, Mode=TwoWay}"/>
                 </StackPanel>
 
-                
-                
             </Grid>
         </SplitView.Pane>
         <SplitView.Content>
             <Grid>
-                <maps:MapControl x:Name="Map" cal:Message.Attach="[Event MapElementClick]=[Action IconClick($eventArgs)]" ZoomInteractionMode="GestureAndControl" TiltInteractionMode="GestureAndControl" RotateInteractionMode="GestureAndControl" LandmarksVisible="True" />
+                <Grid Name="mapGrid" Visibility="{Binding IsMapDisplayed, Converter={StaticResource BooleanVisibilityConverter}}">
+                    <maps:MapControl x:Name="Map" cal:Message.Attach="[Event MapElementClick]=[Action IconClick($eventArgs)]" ZoomInteractionMode="GestureAndControl" TiltInteractionMode="GestureAndControl" RotateInteractionMode="GestureAndControl" LandmarksVisible="True"/>
 
-                <Button FontFamily="Segoe MDL2 Assets" Content="&#xE128;" FontSize="24"
+                    <Button FontFamily="Segoe MDL2 Assets" Content="&#xE128;" FontSize="24"
                     Width="50" Height="50" Background="{StaticResource BlueBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" Click="SwitchMapStyle"/>
 
-                <Button FontFamily="Segoe MDL2 Assets" Content="&#xE81D;" FontSize="24" Margin="0,60,0,0" cal:Message.Attach="[Event Click]=[Action GetMyLocation]"
-                    Width="50" Height="50" Background="{StaticResource BlueBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" />
+                    <Button FontFamily="Segoe MDL2 Assets" Content="&#xE81D;" FontSize="24" Margin="0,60,0,0"
+                    Width="50" Height="50" Background="{StaticResource BlueBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" >
+                        <Button.Flyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="Meine Position" cal:Message.Attach="[Event Click]=[Action GetMyLocation]"/>
+                                <MenuFlyoutItem Text="Auf Karte markieren" Click="SetPositionOnMap"/>
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
 
-                <Button FontFamily="Segoe MDL2 Assets" Content="&#xE700;" FontSize="24"
+                    <Button FontFamily="Segoe MDL2 Assets" Content="&#xE700;" FontSize="24"
                     Width="50" Height="50" Background="{StaticResource BlueBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SplitViewOpenClose"/>
 
 
-                <StackPanel Orientation="Vertical" Visibility="{Binding IsStationInfoDisplayed, Converter={StaticResource BooleanVisibilityConverter}}" VerticalAlignment="Bottom" Background="#cc000000" Padding="12">
-                    <TextBlock FontSize="18" FontWeight="Bold">
-                        <Run Text="Station: "/> <Run Text="{Binding DisplayedStation.name}"/>
-                    </TextBlock>
-                    <TextBlock FontSize="18">
-                        <Run Text="Daten: "/> <Run Text="{Binding DisplayedStation.data[0].value}"/> <Run Text="{Binding DisplayedStation.data[0].type}"/>
-                        <Run Text="&#x0a;Letzte Messung: " /><Run Text="{Binding DisplayedStation.data[0].sourceDate}"/>
-                        <Run Text="&#x0a;Trend: " /><Run Text="{Binding DisplayedStation.TrendString}"/>
-                        <Run Text=", Situation: " /><Run Text="{Binding DisplayedStation.SituationString}"/>
-                    </TextBlock>
-                </StackPanel>
+                    <Grid Visibility="{Binding IsStationInfoDisplayed, Converter={StaticResource BooleanVisibilityConverter}}" VerticalAlignment="Bottom" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <ContentControl IsHitTestVisible="False" DataContext="{Binding DisplayedStation}" ContentTemplate="{StaticResource StationTemplate}"/>
+
+                        <Button Grid.Column="1" cal:Message.Attach="[Event Click]=[Action ShowDetail]">></Button>
+                    </Grid>
 
 
+                </Grid>
+                <Grid Name="listGrid" Background="{StaticResource BlueBrush}" Visibility="{Binding IsListDisplayed, Converter={StaticResource BooleanVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button FontFamily="Segoe MDL2 Assets" Content="&#xE700;" FontSize="24"
+                    Width="50" Height="50" Background="{StaticResource BlueBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SplitViewOpenClose"/>
+                        <TextBlock Text="Liste der Stationen" VerticalAlignment="Center" Margin="24,0,0,0" FontWeight="Bold" FontSize="20"/>
+                    </StackPanel>
+                    
+                    <ListView Grid.Row="1" ItemsSource="{Binding DisplayedStations}" ItemTemplate="{StaticResource StationTemplate}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                </Grid>
             </Grid>
+            
         </SplitView.Content>
     </SplitView>
 </Page>

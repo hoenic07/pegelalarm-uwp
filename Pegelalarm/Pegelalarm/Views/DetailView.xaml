@@ -1,0 +1,69 @@
+﻿<Page
+    x:Class="Pegelalarm.Views.DetailView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Pegelalarm.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    RequestedTheme="Light"
+    xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
+    xmlns:cal="using:Caliburn.Micro"
+    xmlns:ctl="using:Pegelalarm.Controls"
+    mc:Ignorable="d">
+
+    <Grid x:Name="StationInfoGrid" Padding="12" Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!--Header-->
+        <TextBlock Text="{Binding Station.Data.name, FallbackValue='test'}" FontSize="25" TextWrapping="WrapWholeWords" />
+
+        <!--Set alarm grid-->
+        <Grid Grid.Row="1" Visibility="{Binding CansSetAlarm, Converter={StaticResource BooleanVisibilityConverter}}">
+            <Button Content="Alarm setzen" Visibility="{Binding HasAlarm, Converter={StaticResource BooleanVisibilityConverter}, ConverterParameter='invert'}">
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Hochwasser" CommandParameter="high" Click="MenuFlyoutItem_Click" />
+                        <MenuFlyoutItem Text="Niedrigwasser" CommandParameter="low" Click="MenuFlyoutItem_Click"/>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+            <StackPanel Visibility="{Binding Alarm.HasAlarm, Converter={StaticResource BooleanVisibilityConverter}}" Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center">
+                    <Run Text="Alarmieren bei"/>
+                    <Run Text="{Binding Alarm.AlarmValue}"/>
+                    <Run Text="cm "/>
+                    <Run Text="{Binding Alarm.WaterKindString}"/>
+                </TextBlock>
+                <Button Click="Button_Click">X</Button>
+            </StackPanel>
+        </Grid>
+
+        <!--Select time frame and metric-->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,12">
+            <ComboBox ItemsSource="{Binding Metrics}" SelectedItem="{Binding SelectedMetric, Mode=TwoWay}" Width="100" Margin="0,0,12,0">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <ComboBox ItemsSource="{Binding TimeFrames}" SelectedItem="{Binding SelectedTimeFrame, Mode=TwoWay}" Width="100">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+
+        <!--Chart-->
+        <ctl:Chart x:Name="Chart" Grid.Row="3"/>
+
+    </Grid>
+</Page>

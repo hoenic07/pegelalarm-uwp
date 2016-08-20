@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Pegelalarm.Core.Data;
 using Pegelalarm.Core.Network.Data;
 using System;
 using System.Collections.Generic;
@@ -15,17 +16,15 @@ namespace Pegelalarm.Core.Network
 {
     public class WebService
     {
-
-        /// <summary>
-        /// Please visit pegelalarm.at to get this url
-        /// </summary>
-        private const string SERVER = ApiConstants.BASE_URI;
         private const string LIST_ENDPOINT = "station/1.0/list?";
-        private const string HISTORY_ENDPOINT = "";
+        private const string HISTORY_ENDPOINT = "station/1.0/";
+
+        ///api/station/1.0/211458-at/threshold/stats
+        //////api/webcam/1.0/list
 
         public async Task<Response<Station[]>> GetStationsBy(GeoboundingBox boundingBox = null, string nameFilter = null)
         {
-            var uri = SERVER + LIST_ENDPOINT;
+            var uri = ApiConstants.BASE_URI + LIST_ENDPOINT;
 
             if (boundingBox != null) uri += string.Format("bBoxLon1={0}&bBoxLat1={1}&bBoxLon2={2}&bBoxLat2={3}&", boundingBox.NorthwestCorner.Longitude, boundingBox.NorthwestCorner.Latitude, boundingBox.SoutheastCorner.Longitude, boundingBox.SoutheastCorner.Latitude);
             if (!string.IsNullOrWhiteSpace(nameFilter)) uri += string.Format("q={0}", nameFilter);
@@ -39,6 +38,18 @@ namespace Pegelalarm.Core.Network
             };
         }
 
+        public async Task<Response<Sample[]>> GetStationHistory(string id, string type, Granularity granularity, DateTime start, DateTime end)
+        {
+            var uri = ApiConstants.BASE_URI + HISTORY_ENDPOINT + $"{type}/{id}/history?granularity={granularity.ToString().ToLower()}&loadStartDate={DateToUri(start)}&loadEndDate={DateToUri(end)}";
+            var obj = await GetJsonUri<HistoryResponse>(uri);
+
+            return new Response<Sample[]>()
+            {
+                Payload = obj.Item1.payload.history,
+                StatusCode = obj.Item2
+            };
+        }
+
         private async Task<Tuple<T,HttpStatusCode>> GetJsonUri<T>(string uri)
         {
             var res = await (new HttpClient().GetAsync(uri));
@@ -47,6 +58,15 @@ namespace Pegelalarm.Core.Network
             var obj = JsonConvert.DeserializeObject<T>(str);
             Debug.WriteLine("API > Response: " + res.StatusCode);
             return new Tuple<T, HttpStatusCode>(obj, res.StatusCode);
+        }
+
+        private string DateToUri(DateTime date)
+        {
+            var firstPart = date.ToString("dd.MM.yyyyTHH:mm:ss");
+
+            var second = Uri.EscapeDataString(date.ToString("zzz").Replace(":", ""));
+
+            return firstPart + second;
         }
 
     }

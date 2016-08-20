@@ -19,6 +19,8 @@ using Windows.UI.Xaml.Navigation;
 using Pegelalarm.Core.Utils;
 using Windows.UI;
 using Pegelalarm.ViewModels;
+using Windows.UI.Core;
+using Windows.UI.Popups;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -29,7 +31,6 @@ namespace Pegelalarm.Views
     /// </summary>
     public sealed partial class MainView : Page, IMainView
     {
-
         private List<MapItem> stations;
 
         private MapPolygon radiusDisplay;
@@ -37,6 +38,7 @@ namespace Pegelalarm.Views
         public MainView()
         {
             this.InitializeComponent();
+            Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             stations = new List<MapItem>();
         }
 
@@ -146,6 +148,25 @@ namespace Pegelalarm.Views
             {
                 Map.Style = MapStyle.AerialWithRoads;
             }
+        }
+
+        private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Map_MapTapped(MapControl sender, MapInputEventArgs args)
+        {
+            Map.MapTapped -= Map_MapTapped;
+            var p = args.Location.Position;
+            ViewModel.Location = new MapItem(p.Latitude, p.Longitude, MapItemKind.Location, null);
+            ViewModel.UpdateDisplayedStations();
+        }
+
+        private void SetPositionOnMap(object sender, RoutedEventArgs e)
+        {
+            new MessageDialog("Klicke nun auf die Karte um deine Position zu festzulegen!").ShowAsync();
+            Map.MapTapped += Map_MapTapped;
         }
     }
 }

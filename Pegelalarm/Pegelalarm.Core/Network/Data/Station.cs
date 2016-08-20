@@ -1,8 +1,14 @@
-﻿using System;
+﻿using Caliburn.Micro;
+using Pegelalarm.Core.Persistance;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI;
+using Windows.UI.Xaml.Media;
+using Pegelalarm.Core.Utils;
+using System.Runtime.Serialization;
 
 namespace Pegelalarm.Core.Network.Data
 {
@@ -27,39 +33,8 @@ namespace Pegelalarm.Core.Network.Data
         public double defaultWarnValueCm { get; set; }
         public double defaultAlarmValueCm { get; set; }
 
+        
 
-        public string SituationString
-        {
-            get
-            {
-                switch (situation)
-                {
-                    case 50: return "Nationale Überflutungen";
-                    case 40: return "Regionale Überflutungen";
-                    case 30: return "Alarmgrenze";
-                    case 20: return "Warngrenze";
-                    case 10: return "Normalwasser";
-                    case -10:return "Niedrigwasser";
-                    case 100:return "Unbekoannt";
-                }
-                return "Unbekannt";
-            }
-        }
-
-        public string TrendString
-        {
-            get
-            {
-                switch (trend)
-                {
-                    case 10: return "steigend";
-                    case 0: return "gleichbleibend";
-                    case -10: return "fallend";
-                    case 100:return "Unbekannt";
-                }
-                return "Unbekannt";
-            }
-        }
     }
 
     public class Datum

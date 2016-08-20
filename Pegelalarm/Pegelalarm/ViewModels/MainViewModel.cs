@@ -13,6 +13,8 @@ using Windows.Devices.Geolocation;
 using Pegelalarm.Core.Utils;
 using System.Collections.Specialized;
 using Windows.UI.Xaml.Controls.Maps;
+using Windows.ApplicationModel.Background;
+using Pegelalarm.Core.Services;
 
 namespace Pegelalarm.ViewModels
 {
@@ -32,11 +34,11 @@ namespace Pegelalarm.ViewModels
 
         public ObservableCollection<MapItem> MapItems { get; set; }
 
-        public ObservableCollection<Station> DisplayedStations { get; set; }
+        public ObservableCollection<UIStation> DisplayedStations { get; set; }
 
-        private Station displayedStation;
+        private UIStation displayedStation;
 
-        public Station DisplayedStation
+        public UIStation DisplayedStation
         {
             get { return displayedStation; }
             set { displayedStation = value; NotifyOfPropertyChange(); }
@@ -79,6 +81,22 @@ namespace Pegelalarm.ViewModels
             set { isStationInfoDisplayed = value; NotifyOfPropertyChange(); }
         }
 
+        private bool isMapDisplayed;
+
+        public bool IsMapDisplayed
+        {
+            get { return isMapDisplayed; }
+            set { isMapDisplayed = value; NotifyOfPropertyChange(); }
+        }
+
+        private bool isListDisplayed;
+
+        public bool IsListDisplayed
+        {
+            get { return isListDisplayed; }
+            set { isListDisplayed = value; NotifyOfPropertyChange(); }
+        }
+
 
         #endregion
 
@@ -89,10 +107,12 @@ namespace Pegelalarm.ViewModels
             this.webService = webService;
             locator = new Geolocator();
             MapItems = new ObservableCollection<MapItem>();
-            DisplayedStations = new ObservableCollection<Station>();
+            DisplayedStations = new ObservableCollection<UIStation>();
             sliderDelayer = new Delayer(TimeSpan.FromSeconds(1));
             sliderDelayer.Action += (a, b) => UpdateDisplayedStations();
             DisplayRange = 100;
+            IsMapDisplayed = true;
+            RegisterBackgroundTask();
         }
         #endregion
 
@@ -138,7 +158,7 @@ namespace Pegelalarm.ViewModels
             var icon = o.MapElements.FirstOrDefault(d => d is MapIcon);
             var item = MapItems.FirstOrDefault(i => i.Icon == icon);
             if (item == null) return;
-            DisplayedStation = DisplayedStations.FirstOrDefault(s => s.commonid == item.ID);
+            DisplayedStation = DisplayedStations.FirstOrDefault(s => s.Data.commonid == item.ID);
             IsStationInfoDisplayed = true;
         }
 
@@ -147,11 +167,38 @@ namespace Pegelalarm.ViewModels
             IsStationInfoDisplayed = false;
         }
 
+
+        public void Show(int id)
+        {
+            IsMapDisplayed = false;
+            IsListDisplayed = false;
+
+            switch (id)
+            {
+                case 0:
+                    IsMapDisplayed = true; break;
+                case 1:
+                    IsListDisplayed = true; break;
+            }
+
+        }
+
+        public void ShowDetail(UIStation st)
+        {
+            var id = st.Data.commonid;
+            navService.For<DetailViewModel>().WithParam<string>(d => d.StationId, id).Navigate();
+        }
+
+        public void ShowDetail()
+        {
+            ShowDetail(DisplayedStation);
+        }
+
         #endregion
 
         #region Methods
-        
-        private async void UpdateDisplayedStations()
+
+        public async void UpdateDisplayedStations()
         {
             if (Location == null) return;
             var loc = Location.Icon.Location;
@@ -165,12 +212,48 @@ namespace Pegelalarm.ViewModels
                 foreach (var st in resSt.Payload)
                 {
                     Geopoint d = new Geopoint(new BasicGeoposition { Latitude = st.latitude, Longitude = st.longitude });
-                    if (loc.GetDistanceInMetersBetween(d) > DisplayRange * 1000) continue;
+                    var dist = loc.GetDistanceInMetersBetween(d);
+                    if (dist > DisplayRange * 1000) continue;
                     var mi = new MapItem(st.latitude, st.longitude, MapItemKind.Station, st);
                     MapItems.Add(mi);
-                    DisplayedStations.Add(st);
+                    DisplayedStations.Add(new UIStation { Data = st });
                 }
             }
+        }
+
+        public async Task RegisterBackgroundTask()
+        {
+            var taskRegistered = false;
+            var exampleTaskName = "PeriodicStationTask";
+
+            foreach (var task in BackgroundTaskRegistration.AllTasks)
+            {
+                if (task.Value.Name == exampleTaskName)
+                {
+                    taskRegistered = true;
+                    break;
+                }
+            }
+
+            if (!taskRegistered)
+            {
+                var builder = new BackgroundTaskBuilder();
+
+                builder.Name = "PeriodicStationTask";
+                builder.TaskEntryPoint = "Pegelalarm.Core.Tasks.PeriodicStationTask";
+                builder.SetTrigger(new TimeTrigger(30, false));
+
+                BackgroundTaskRegistration task = builder.Register();
+                await BackgroundExecutionManager.RequestAccessAsync();
+            }
+
+            // Just for testing the background task
+            if (false)
+            {
+                var pst = new PeriodicStationTask();
+                pst.Run(null);
+            }
+
         }
 
         #endregion

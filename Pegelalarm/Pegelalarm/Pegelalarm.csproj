@@ -95,9 +95,17 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Chart.xaml.cs">
+      <DependentUpon>Chart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\BooleanVisibilityConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\DetailViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="Views\DetailView.xaml.cs">
+      <DependentUpon>DetailView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\IDetailView.cs" />
     <Compile Include="Views\IMainView.cs" />
     <Compile Include="Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -125,8 +133,15 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
+    <Page Include="Controls\Chart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DetailView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

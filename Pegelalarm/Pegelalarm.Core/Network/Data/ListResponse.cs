@@ -10,7 +10,7 @@ namespace Pegelalarm.Core.Network.Data
     public class ListResponse
     {
         public Status status { get; set; }
-        public Payload payload { get; set; }
+        public PayloadList payload { get; set; }
     }
 
     public class Status
@@ -18,7 +18,7 @@ namespace Pegelalarm.Core.Network.Data
         public int code { get; set; }
     }
 
-    public class Payload
+    public class PayloadList
     {
         public Station[] stations { get; set; }
     }
