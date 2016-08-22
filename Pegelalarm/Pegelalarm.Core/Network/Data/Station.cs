@@ -9,6 +9,7 @@ using Windows.UI;
 using Windows.UI.Xaml.Media;
 using Pegelalarm.Core.Utils;
 using System.Runtime.Serialization;
+using Pegelalarm.Core.Data;
 
 namespace Pegelalarm.Core.Network.Data
 {
@@ -40,6 +41,17 @@ namespace Pegelalarm.Core.Network.Data
     public class Datum
     {
         public string type { get; set; }
+
+        public string TypeString
+        {
+            get { return type.Contains("height") ? "cm" : "m³/s"; }
+        }
+
+        public MetricKind Metric
+        {
+            get { return type.Contains("height") ? MetricKind.Height:MetricKind.Flow; }
+        }
+
         public float value { get; set; }
         public string requestDate { get; set; }
         public string sourceDate { get; set; }

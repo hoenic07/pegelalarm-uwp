@@ -1,6 +1,8 @@
 ﻿using Caliburn.Micro;
 using Pegelalarm.Core.Data;
 using Pegelalarm.Core.Network;
+using Pegelalarm.Core.Persistance;
+using Pegelalarm.Core.Utils;
 using Pegelalarm.Views;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,7 @@ namespace Pegelalarm.ViewModels
         private WebService webService;
         private IDetailView view;
         private List<Alarm> alarms;
+        private Delayer alarmStorageDelayer;
 
         #endregion
 
@@ -59,7 +62,7 @@ namespace Pegelalarm.ViewModels
             set {
                 selectedMetric = value;
                 NotifyOfPropertyChange();
-                alarm = alarms.First(d => d.MetricKind == selectedMetric.Kind);
+                Alarm = alarms.First(d => d.MetricKind == selectedMetric.Kind);
                 LoadGraphData();
             }
         }
@@ -70,17 +73,15 @@ namespace Pegelalarm.ViewModels
         public Alarm Alarm
         {
             get { return alarm; }
-            set { alarm = value; NotifyOfPropertyChange(); }
+            set
+            {
+                alarm = value; NotifyOfPropertyChange();
+                if (alarm.HasAlarm)
+                {
+                    view.ShowAlarmSlider();
+                }
+            }
         }
-
-        private bool canSetAlarm;
-
-        public bool CanSetAlarm
-        {
-            get { return canSetAlarm; }
-            set { canSetAlarm = value; NotifyOfPropertyChange(); }
-        }
-
 
         #endregion
 
@@ -95,11 +96,6 @@ namespace Pegelalarm.ViewModels
                 new Timeframe {Name="7 Tage", FromDate = DateTime.Now.AddDays(-7), Granularity= Granularity.Hour },
                 new Timeframe {Name="30 Tage", FromDate = DateTime.Now.AddDays(-30), Granularity=Granularity.Day },
             };
-            SelectedTimeFrame = TimeFrames[0];
-            Metrics = new ObservableCollection<Metric>();
-            Metrics.Add(new Metric { Kind = MetricKind.Height, Name = "cm" });
-            Metrics.Add(new Metric { Kind = MetricKind.Flow, Name = "m³/s" });
-            SelectedMetric = Metrics[0];
 
             alarms = new List<Alarm>
             {
@@ -108,6 +104,14 @@ namespace Pegelalarm.ViewModels
             };
 
             Alarm = alarms[0];
+
+            SelectedTimeFrame = TimeFrames[0];
+            Metrics = new ObservableCollection<Metric>();
+            Metrics.Add(new Metric { Kind = MetricKind.Height, Name = "cm" });
+            Metrics.Add(new Metric { Kind = MetricKind.Flow, Name = "m³/s" });
+            SelectedMetric = Metrics[0];
+            alarmStorageDelayer = new Delayer(TimeSpan.FromSeconds(1.5));
+            alarmStorageDelayer.Action += (a,b) => SaveAlarm();
         }
 
         #endregion
@@ -118,8 +122,28 @@ namespace Pegelalarm.ViewModels
         {
             base.OnActivate();
             Station = IoC.Get<MainViewModel>().DisplayedStations.FirstOrDefault(st => st.Data.commonid == StationId);
-            
-            LoadGraphData();
+
+            var stations = await GlobalSettings.Instance.GetMonitoredStations();
+            var heightAlarm = stations.FirstOrDefault(a => a.StationId == StationId && a.MetricKind == MetricKind.Height);
+            var flowAlarm = stations.FirstOrDefault(a => a.StationId == StationId && a.MetricKind == MetricKind.Flow);
+
+            if (heightAlarm != null)
+            {
+                heightAlarm.HasAlarm = true;
+                alarms[0] = heightAlarm;
+            }
+            if (flowAlarm != null)
+            {
+                flowAlarm.HasAlarm = true;
+                alarms[1] = flowAlarm;
+            }
+
+            if (heightAlarm != null || flowAlarm != null)
+            {
+                Alarm = alarms.First(d => d.MetricKind == selectedMetric.Kind);
+            }
+
+            LoadGraphData(true);
         }
 
         protected override void OnViewLoaded(object view)
@@ -142,7 +166,7 @@ namespace Pegelalarm.ViewModels
 
         #region Methods
 
-        private async Task LoadGraphData()
+        private async Task LoadGraphData(bool isInit=false)
         {
             if (SelectedMetric == null || SelectedTimeFrame == null || StationId == null) return;
             
@@ -151,14 +175,45 @@ namespace Pegelalarm.ViewModels
             
             if (res.IsSuccessful)
             {
-                CanSetAlarm = res.Payload.Length > 0;
+                Alarm.CanSetAlarm = res.Payload.Length > 0;
 
                 var d = Station.Data;
                 var alarmValue = SelectedMetric.Kind == MetricKind.Height ? d.defaultAlarmValueCm : d.defaultAlarmValueM3s;
                 var warnValue = SelectedMetric.Kind == MetricKind.Height ? d.defaultWarnValueCm : d.defaultWarnValueM3s;
 
-                view.ConfigChart(0, 0, res.Payload.ToList());
+                view.ConfigChart(warnValue, alarmValue, res.Payload.ToList());
+
+                if (res.Payload.Length == 0 && isInit)
+                {
+                    SelectedMetric = Metrics[1];
+                }
             }
+        }
+
+        public void AlarmChanged()
+        {
+            alarmStorageDelayer.ResetAndTick();
+        }
+
+        private async void SaveAlarm()
+        {
+            var stations = await GlobalSettings.Instance.GetMonitoredStations();
+            Alarm.StationId = StationId;
+            var al = stations.FirstOrDefault(st => st.StationId == StationId && st.MetricKind == Alarm.MetricKind);
+            if (al != null) stations.Remove(al);
+            stations.Add(Alarm);
+
+            await GlobalSettings.Instance.SaveMonitoredStations(stations);
+        }
+
+        public async void RemoveAlarm()
+        {
+            var stations = await GlobalSettings.Instance.GetMonitoredStations();
+            Alarm.StationId = StationId;
+            var al = stations.FirstOrDefault(st => st.StationId == StationId && st.MetricKind == Alarm.MetricKind);
+            if (al != null) stations.Remove(al);
+            
+            await GlobalSettings.Instance.SaveMonitoredStations(stations);
         }
 
         #endregion

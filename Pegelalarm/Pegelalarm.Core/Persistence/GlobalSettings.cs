@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Pegelalarm.Core.Data;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,6 +29,21 @@ namespace Pegelalarm.Core.Persistance
             }
         }
 
+        private string LocationRangeString = "location";
+
+        public LocationRange LocationRange
+        {
+            get
+            {
+                return Get<LocationRange>(LocationRangeString);
+            }
+            set
+            {
+                Save(LocationRangeString, value);
+            }
+        }
+
+
         private GlobalSettings()
         {
             SetDefaultValues();
@@ -53,6 +69,7 @@ namespace Pegelalarm.Core.Persistance
         private void SetDefaultValues()
         {
             _defaultValues = new Dictionary<string, object>();
+            _defaultValues[LocationRangeString] = new LocationRange { Latitude = 0, Longitude = 0, AlarmRadius = 10, DisplayRadius = 50 };
         }
 
         #region Storage Methods
@@ -61,7 +78,7 @@ namespace Pegelalarm.Core.Persistance
         /// Stores the default value in the local settings
         /// </summary>
         /// <returns></returns>
-        public async Task ApplyDefaultValues()
+        public void ApplyDefaultValues()
         {
             foreach (var item in _defaultValues)
             {
@@ -137,31 +154,17 @@ namespace Pegelalarm.Core.Persistance
 
         #region Setting Properties
 
-        public async Task<List<string>> GetMonitoredStations()
+        public async Task<List<Alarm>> GetMonitoredStations()
         {
-            var st = await GetFromFile<List<string>>("m_stations");
-            return st ?? new List<string>();
+            var st = await GetFromFile<List<Alarm>>("m_stations");
+            return st ?? new List<Alarm>();
         }
 
-        public async Task SaveMonitoredStations(List<string> stationIds)
+        public async Task SaveMonitoredStations(List<Alarm> stationIds)
         {
             await SaveToFile("m_stations", stationIds);
         }
-
-        public async Task AddToMonitoredStations(string id)
-        {
-            var t = await GetMonitoredStations();
-            if (!t.Contains(id)) t.Add(id);
-            await SaveMonitoredStations(t);
-        }
-
-        public async Task RemoveFromMonitoredStations(string id)
-        {
-            var t = await GetMonitoredStations();
-            if (t.Contains(id)) t.Remove(id);
-            await SaveMonitoredStations(t);
-        } 
-
+        
         #endregion
 
 

@@ -21,6 +21,8 @@ using Windows.UI;
 using Pegelalarm.ViewModels;
 using Windows.UI.Core;
 using Windows.UI.Popups;
+using System.Threading.Tasks;
+using Pegelalarm.Controls;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -34,10 +36,12 @@ namespace Pegelalarm.Views
         private List<MapItem> stations;
 
         private MapPolygon radiusDisplay;
+        private MapPolygon alarmDisplay;
 
         public MainView()
         {
             this.InitializeComponent();
+            NavigationCacheMode = NavigationCacheMode.Required;
             Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             stations = new List<MapItem>();
         }
@@ -62,18 +66,20 @@ namespace Pegelalarm.Views
 
         private void MainView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (radiusDisplay != null)
+            if (e == null || e.PropertyName == nameof(ViewModel.DisplayRange) && radiusDisplay != null)
             {
-                Map.MapElements.Remove(radiusDisplay);
-                radiusDisplay = CreateCircle(ViewModel.Location.Icon.Location, ViewModel.DisplayRange * 1000);
-                radiusDisplay.FillColor = (Color)App.Current.Resources["TransparentGreyColor"];
-                radiusDisplay.StrokeColor = (Color)App.Current.Resources["DarkGreyColor"];
-                Map.MapElements.Add(radiusDisplay);
+                UpdateDisplayRadiusCircle();
+            }
+
+            if (e.PropertyName == nameof(ViewModel.AlarmRange))
+            {
+                UpdateAlarmCircle();
             }
         }
 
-        public void ShowMapAt(double lat, double lon, int zoom = 12)
+        public async void ShowMapAt(double lat, double lon, int zoom = 10)
         {
+            await Task.Delay(1);
             Map.TrySetViewAsync(new Geopoint(new BasicGeoposition { Latitude = lat, Longitude = lon }), zoom);
         }
 
@@ -100,20 +106,20 @@ namespace Pegelalarm.Views
             foreach (var newItem in e.NewItems ?? new List<object>())
             {
                 var item = newItem as MapItem;
+                item.Icon.ZIndex = 2;
                 Map.MapElements.Add(item.Icon);
                 if (item.Kind == MapItemKind.Location)
                 {
-                    var disRange = (DataContext as MainViewModel).DisplayRange;
-                    radiusDisplay = CreateCircle(item.Icon.Location, disRange * 1000);
-                    radiusDisplay.FillColor = (Color)App.Current.Resources["TransparentGreyColor"];
-                    radiusDisplay.StrokeColor = (Color)App.Current.Resources["DarkGreyColor"];
-                    Map.MapElements.Add(radiusDisplay);
+                    UpdateDisplayRadiusCircle();
                 }
                 else
                 {
                     stations.Add(item);
                 }
             }
+
+            UpdateAlarmCircle();
+
         }
 
         private MapPolygon CreateCircle(Geopoint point, int radius)
@@ -130,7 +136,6 @@ namespace Pegelalarm.Views
             mp.Path = new Geopath(list);
             return mp;
         }
-
 
 
         private void SplitViewOpenClose(object sender, RoutedEventArgs e)
@@ -167,6 +172,44 @@ namespace Pegelalarm.Views
         {
             new MessageDialog("Klicke nun auf die Karte um deine Position zu festzulegen!").ShowAsync();
             Map.MapTapped += Map_MapTapped;
+        }
+
+        private void UpdateDisplayRadiusCircle()
+        {
+            if (radiusDisplay != null && Map.MapElements.Contains(radiusDisplay))
+            {
+                Map.MapElements.Remove(radiusDisplay);
+            }
+            radiusDisplay = CreateCircle(ViewModel.Location.Icon.Location, ViewModel.DisplayRange * 1000);
+            radiusDisplay.FillColor = (Color)App.Current.Resources["TransparentGreyColor"];
+            radiusDisplay.StrokeColor = (Color)App.Current.Resources["DarkGreyColor"];
+            radiusDisplay.ZIndex = 0;
+            Map.MapElements.Add(radiusDisplay);
+        }
+
+        private void UpdateAlarmCircle()
+        {
+            if (alarmDisplay != null && Map.MapElements.Contains(alarmDisplay))
+            {
+                Map.MapElements.Remove(alarmDisplay);
+            }
+            alarmDisplay = CreateCircle(ViewModel.Location.Icon.Location, ViewModel.AlarmRange * 1000);
+            alarmDisplay.FillColor = (Color)App.Current.Resources["TransparentRedColor"];
+            alarmDisplay.StrokeColor = (Color)App.Current.Resources["DarkGreyColor"];
+            alarmDisplay.ZIndex = 1;
+            Map.MapElements.Add(alarmDisplay);
+        }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SplitView.IsPaneOpen = false;
+            ViewModel.Show((sender as ListView).SelectedIndex);
+        }
+
+        private void ShowAbout(object sender, RoutedEventArgs e)
+        {
+            SplitView.IsPaneOpen = true;
+            new InfoDialog().ShowAsync();
         }
     }
 }

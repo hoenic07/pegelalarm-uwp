@@ -1,35 +1,86 @@
-﻿using Pegelalarm.Core.Data;
+﻿using Caliburn.Micro;
+using Pegelalarm.Core.Data;
+using Pegelalarm.Core.Network;
 using Pegelalarm.Core.Network.Data;
 using Pegelalarm.Core.Persistance;
+using Pegelalarm.Core.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.Data.Xml.Dom;
+using Windows.Devices.Geolocation;
 using Windows.UI.Notifications;
 
-namespace Pegelalarm.Core.Services
+namespace Pegelalarm.Core.Tasks
 {
     public class PeriodicStationTask : IBackgroundTask
     {
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
+            Debug.WriteLine("Background task!");
+            var loc = GlobalSettings.Instance.LocationRange;
+            if (loc.Latitude == 0 && loc.Longitude == 0)
+            {
+                return;
+            }
+
             var def = taskInstance.GetDeferral();
-            var st = await GlobalSettings.Instance.GetMonitoredStations();
 
-            //load stations
+            var gp = new Geopoint(new BasicGeoposition { Latitude = loc.Latitude, Longitude = loc.Longitude });
+            var bb = GeoUtils.CalculateBoundingBoxAroundPosition(gp, loc.DisplayRadius * 1000);
 
+            var allStations = await (new WebService().GetStationsBy(bb));
 
-            var stationData = new List<Station>();
+            if (!allStations.IsSuccessful)
+            {
+                def.Complete();
+                return;
+            }
 
-            foreach (var station in stationData)
+            var monitoredStations = await GlobalSettings.Instance.GetMonitoredStations();
+
+            foreach (var station in allStations.Payload)
             {
                 var uist = new UIStation { Data = station };
-                if(station.situation != 100 && station.situation >= 30)
+                var stGp = new Geopoint(new BasicGeoposition { Latitude = station.latitude, Longitude = station.longitude });
+
+                //check if station is in alarm radius
+                var isInAlarmRadius = GeoUtils.GetDistanceInMetersBetween(gp, stGp) < loc.AlarmRadius * 1000;
+
+                var monFlow = monitoredStations.FirstOrDefault(s => s.StationId == station.commonid && s.MetricKind==MetricKind.Flow);
+                var monHeight = monitoredStations.FirstOrDefault(s => s.StationId == station.commonid && s.MetricKind==MetricKind.Height);
+
+                var flow = station.data.FirstOrDefault(d => d.Metric == MetricKind.Flow);
+                var height = station.data.FirstOrDefault(d => d.Metric == MetricKind.Height);
+                
+                if (monFlow != null && flow!=null)
                 {
-                    ShowToast(uist.SituationString, string.Format("{0}, Pegel: {1} {2}, Trend: {3}", station.name, station.data?[0]?.value, station.data?[0]?.type, uist.TrendString));
+                    if(monFlow.WaterKind==WaterKind.Highwater && flow.value >= monFlow.AlarmValue ||
+                       monFlow.WaterKind == WaterKind.Lowwater && flow.value <= monFlow.AlarmValue)
+                    {
+                        ShowToast("Alarm!", station.name + " " + monFlow.WaterKindString );
+                        continue;
+                    }
+                }
+
+                if (monHeight != null && height != null)
+                {
+                    if (monHeight.WaterKind == WaterKind.Highwater && height.value >= monHeight.AlarmValue ||
+                       monHeight.WaterKind == WaterKind.Lowwater && height.value <= monHeight.AlarmValue)
+                    {
+                        ShowToast("Alarm!", station.name + " " + monHeight.WaterKindString);
+                        continue;
+                    }
+                }
+
+                if (isInAlarmRadius &&station.situation != 100 && station.situation >= 20)
+                {
+                    ShowToast("Alarm!", station.name+ " - "+ uist.SituationString);
+                    continue;
                 }
             }
 

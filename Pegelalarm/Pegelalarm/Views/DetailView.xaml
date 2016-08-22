@@ -24,8 +24,8 @@
         <TextBlock Text="{Binding Station.Data.name, FallbackValue='test'}" FontSize="25" TextWrapping="WrapWholeWords" />
 
         <!--Set alarm grid-->
-        <Grid Grid.Row="1" Visibility="{Binding CansSetAlarm, Converter={StaticResource BooleanVisibilityConverter}}">
-            <Button Content="Alarm setzen" Visibility="{Binding HasAlarm, Converter={StaticResource BooleanVisibilityConverter}, ConverterParameter='invert'}">
+        <Grid Grid.Row="1" DataContext="{Binding Alarm, Mode=OneWay}" Visibility="{Binding CanSetAlarm, Mode=OneWay, Converter={StaticResource BooleanVisibilityConverter}}">
+            <Button Content="Alarm setzen" Visibility="{Binding HasAlarm, Mode=OneWay, Converter={StaticResource BooleanVisibilityConverter}, ConverterParameter='invert'}">
                 <Button.Flyout>
                     <MenuFlyout>
                         <MenuFlyoutItem Text="Hochwasser" CommandParameter="high" Click="MenuFlyoutItem_Click" />
@@ -33,14 +33,14 @@
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
-            <StackPanel Visibility="{Binding Alarm.HasAlarm, Converter={StaticResource BooleanVisibilityConverter}}" Orientation="Horizontal">
+            <StackPanel Visibility="{Binding HasAlarm, Converter={StaticResource BooleanVisibilityConverter}}" Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center">
                     <Run Text="Alarmieren bei"/>
-                    <Run Text="{Binding Alarm.AlarmValue}"/>
-                    <Run Text="cm "/>
-                    <Run Text="{Binding Alarm.WaterKindString}"/>
+                    <Run Text="{Binding AlarmValue}"/>
+                    <Run Text="{Binding MetricKindString}"/>
+                    <Run Text="{Binding WaterKindString}"/>
                 </TextBlock>
-                <Button Click="Button_Click">X</Button>
+                <Button Click="Button_Click" Margin="12,0,0,0">X</Button>
             </StackPanel>
         </Grid>
 

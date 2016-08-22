@@ -11,5 +11,6 @@ namespace Pegelalarm.Views
     public interface IDetailView
     {
         void ConfigChart(double warnValue, double alarmValue, List<Sample> samples);
+        void ShowAlarmSlider();
     }
 }

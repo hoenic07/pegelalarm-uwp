@@ -19,9 +19,9 @@
                     <ColumnDefinition Width="Auto"/> <!--Height / Trend-->
                     <ColumnDefinition Width="Auto"/> <!--Fav-->
                 </Grid.ColumnDefinitions>
-                <Rectangle Width="10" Height="30" Fill="{Binding SituationColor}"/>
+                <Rectangle Width="10" Fill="{Binding SituationColor}"/>
 
-                <TextBlock Grid.Column="1" Margin="12,0">
+                <TextBlock Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
                     <Bold><Run Text="{Binding Data.name}" /></Bold>
                     <LineBreak/>
                     <Run Text="{Binding SituationString}" FontSize="12"/>
@@ -32,57 +32,99 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock TextAlignment="Right">
-                                    <Run Text="{Binding value}"/> <Run Text="{Binding type}"/>
+                                    <Run Text="{Binding value}"/> <Run Text="{Binding TypeString}"/>
                                 </TextBlock>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <TextBlock Text="{Binding TrendString}" TextAlignment="Right"/>
                 </StackPanel>
-
-                <!--<SymbolIcon Grid.Column="3" Symbol="Favorite" cal:Message.Attach="[Event Tapped]=[Action Monitor]" Visibility="{Binding IsFavorite, Converter={StaticResource BooleanVisibilityConverter}, ConverterParameter='invert'}"/>-->
-                <!--<SymbolIcon Grid.Column="3" Symbol="UnFavorite" cal:Message.Attach="[Event Tapped]=[Action UnMonitor]" Visibility="{Binding IsFavorite, Converter={StaticResource BooleanVisibilityConverter}}"/>-->
-                
             </Grid>
         </DataTemplate>
-        
+
+        <DataTemplate x:Key="MonitoredStationTemplate">
+            <Grid Margin="6,12" cal:Message.Attach="[Event Tapped]=[Action ShowDetail($dataContext)]" Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <!--Color-->
+                    <ColumnDefinition Width="*"/>
+                    <!--Name / Situation-->
+                    <ColumnDefinition Width="Auto"/>
+                    <!--Height / Trend-->
+                    <ColumnDefinition Width="Auto"/>
+                    <!--Fav-->
+                </Grid.ColumnDefinitions>
+                <Rectangle Width="10" Fill="{Binding SituationColor}"/>
+
+                <TextBlock Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
+                    <Bold><Run Text="{Binding Data.name}" /></Bold>
+                    <LineBreak/>
+                    <Run Text="{Binding SituationString}" FontSize="12"/>
+                </TextBlock>
+
+                <StackPanel Grid.Column="2" Orientation="Vertical">
+                    <TextBlock TextAlignment="Right">
+                            <Run Text="{Binding MonitoredValue}"/> <Run Text="{Binding MonitoredValueTypeString}"/><LineBreak/>
+                            <Run Text="{Binding AlarmValue}"/> <Run Text="{Binding MonitoredValueTypeString}"/><LineBreak/>
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
     </Page.Resources>
 
     <SplitView x:Name="SplitView" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-               OpenPaneLength="300" DisplayMode="Inline">
+               OpenPaneLength="250" DisplayMode="Overlay">
         <SplitView.Pane>
-            <Grid Background="{StaticResource BlueBrush}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <ListView Grid.Row="0">
-                    <Grid cal:Message.Attach="[Event Tapped]=[Action Show(0)]" Background="Transparent">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Background="{StaticResource BlueBrush}">
+                    <ListView  SelectionChanged="ListView_SelectionChanged">
                         <TextBlock Text="Karte anzeigen" />
-                    </Grid>
-                    <Grid cal:Message.Attach="[Event Tapped]=[Action Show(1)]" Background="Transparent">
                         <TextBlock Text="Liste der Stationen" Grid.Row="1" Margin="0,12,0,12"/>
-                    </Grid>
-                    <Grid cal:Message.Attach="[Event Tapped]=[Action Show(1)]" Background="Transparent">
                         <TextBlock Text="Überwachte Stationen" Grid.Row="2"/>
-                    </Grid>
-                </ListView>
-                
-                <Rectangle Height="2" Grid.Row="1" Margin="12" Fill="{StaticResource ApplicationForegroundThemeBrush}"/>
+                    </ListView>
 
-                <StackPanel Orientation="Vertical" Grid.Row="2" Margin="12">
-                    <TextBlock TextWrapping="WrapWholeWords">
-                        <Run Text="Radius der angezeigten Stationen: "/><Run Text="{Binding DisplayRange, FallbackValue='0'}"/><Run Text="km"/>
-                    </TextBlock>
-                    <Slider Minimum="5" Maximum="150" Value="{Binding DisplayRange, Mode=TwoWay}"/>
+                    <Rectangle Height="2" Margin="0,6" Fill="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+
+                    <!--Displayradius-->
+                    <StackPanel Orientation="Vertical" Margin="12">
+                        <TextBlock TextWrapping="WrapWholeWords">
+                        <Run Text="Heimatradius "/><LineBreak/>
+                        <Run FontSize="18" Text="{Binding DisplayRange, FallbackValue='0'}"/> <Run FontSize="18" Text="km"/>
+                        </TextBlock>
+                        <Button Content="Ändern">
+                            <Button.Flyout>
+                                <Flyout>
+                                    <Slider Minimum="5" Maximum="100" Width="150" Value="{Binding DisplayRange, Mode=TwoWay}"/>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+
+                    <!--Alarmradius-->
+                    <StackPanel Orientation="Vertical" Margin="12">
+                        <TextBlock TextWrapping="WrapWholeWords">
+                        <Run Text="Alarmradius "/><LineBreak/>
+                        <Run FontSize="18" Text="{Binding AlarmRange, FallbackValue='0'}"/> <Run FontSize="18" Text="km"/>
+                        </TextBlock>
+                        <Button Content="Ändern">
+                            <Button.Flyout>
+                                <Flyout>
+                                    <Slider Minimum="1" Maximum="50" Width="150" Value="{Binding AlarmRange, Mode=TwoWay}"/>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+
+                    <Rectangle Height="2" Margin="0,6" Fill="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+
+                    <Button Margin="12,6" Click="ShowAbout">Über Pegelalarm</Button>
                 </StackPanel>
-
-            </Grid>
+            </ScrollViewer>
         </SplitView.Pane>
         <SplitView.Content>
             <Grid>
+                <!--Map-->
                 <Grid Name="mapGrid" Visibility="{Binding IsMapDisplayed, Converter={StaticResource BooleanVisibilityConverter}}">
                     <maps:MapControl x:Name="Map" cal:Message.Attach="[Event MapElementClick]=[Action IconClick($eventArgs)]" ZoomInteractionMode="GestureAndControl" TiltInteractionMode="GestureAndControl" RotateInteractionMode="GestureAndControl" LandmarksVisible="True"/>
 
@@ -102,21 +144,25 @@
                     <Button FontFamily="Segoe MDL2 Assets" Content="&#xE700;" FontSize="24"
                     Width="50" Height="50" Background="{StaticResource BlueBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SplitViewOpenClose"/>
 
-
                     <Grid Visibility="{Binding IsStationInfoDisplayed, Converter={StaticResource BooleanVisibilityConverter}}" VerticalAlignment="Bottom" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12">
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        
-                        <ContentControl IsHitTestVisible="False" DataContext="{Binding DisplayedStation}" ContentTemplate="{StaticResource StationTemplate}"/>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
 
-                        <Button Grid.Column="1" cal:Message.Attach="[Event Click]=[Action ShowDetail]">></Button>
+                        <ContentControl Grid.RowSpan="2" IsHitTestVisible="False" DataContext="{Binding DisplayedStation}" ContentTemplate="{StaticResource StationTemplate}"/>
+
+                        <Button Grid.Column="1" Grid.Row="0" cal:Message.Attach="[Event Click]=[Action HideStationInfo]" HorizontalAlignment="Right" Margin="0,0,0,2">X</Button>
+                        <Button Grid.Column="1" Grid.Row="1" cal:Message.Attach="[Event Click]=[Action ShowDetail]">Details</Button>
                     </Grid>
-
-
                 </Grid>
+
+                <!--List of all displayed stations-->
                 <Grid Name="listGrid" Background="{StaticResource BlueBrush}" Visibility="{Binding IsListDisplayed, Converter={StaticResource BooleanVisibilityConverter}}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -128,7 +174,7 @@
                     Width="50" Height="50" Background="{StaticResource BlueBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SplitViewOpenClose"/>
                         <TextBlock Text="Liste der Stationen" VerticalAlignment="Center" Margin="24,0,0,0" FontWeight="Bold" FontSize="20"/>
                     </StackPanel>
-                    
+
                     <ListView Grid.Row="1" ItemsSource="{Binding DisplayedStations}" ItemTemplate="{StaticResource StationTemplate}">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
@@ -136,9 +182,35 @@
                             </Style>
                         </ListView.ItemContainerStyle>
                     </ListView>
+
+                    <TextBlock Text="Keine angezeigten Stationen" Grid.Row="1" FontSize="18" Margin="20" Visibility="{Binding DisplayedStations, Converter={StaticResource CollectionVisibilityConverter}, ConverterParameter='invert'}"/>
+                </Grid>
+
+                <!--List of monitored stations-->
+                <Grid Name="monitoredListGrid" Background="{StaticResource BlueBrush}" Visibility="{Binding IsMonitoredListDisplayed, Converter={StaticResource BooleanVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button FontFamily="Segoe MDL2 Assets" Content="&#xE700;" FontSize="24"
+                    Width="50" Height="50" Background="{StaticResource BlueBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SplitViewOpenClose"/>
+                        <TextBlock Text="Überwachte Stationen" VerticalAlignment="Center" Margin="24,0,0,0" FontWeight="Bold" FontSize="20"/>
+                    </StackPanel>
+
+                    <ListView Grid.Row="1" ItemsSource="{Binding MonitoredStations}" ItemTemplate="{StaticResource MonitoredStationTemplate}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+
+                    <TextBlock Text="Keine überwachten Stationen" Grid.Row="1" FontSize="18" Margin="20" Visibility="{Binding MonitoredStations, Converter={StaticResource CollectionVisibilityConverter}, ConverterParameter='invert'}"/>
+
                 </Grid>
             </Grid>
-            
         </SplitView.Content>
     </SplitView>
 </Page>

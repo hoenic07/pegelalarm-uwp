@@ -1,0 +1,21 @@
+﻿<ContentDialog
+    x:Class="Pegelalarm.Controls.InfoDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Pegelalarm.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Über Pegelalarm"
+    PrimaryButtonText="Ok">
+
+    <StackPanel>
+        <TextBlock Margin="0,12,0,12">
+            <Run Text="Pegelalarm 1.0"/><LineBreak/>
+            <Run Text="Umsetzung: Niklas Hösl"/>
+        </TextBlock>
+        <HyperlinkButton Click="DataSource_Click">Datenquelle: www.pegelalarm.at</HyperlinkButton>
+        <HyperlinkButton Click="Feedback_Click">Feedback: nik.hoesl@hotmail.com</HyperlinkButton>
+        <HyperlinkButton Click="Source_Click">https://github.com/hoenic07/pegelalarm-uwp</HyperlinkButton>
+    </StackPanel>
+</ContentDialog>

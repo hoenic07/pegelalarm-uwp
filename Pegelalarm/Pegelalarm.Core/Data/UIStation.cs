@@ -80,19 +80,12 @@ namespace Pegelalarm.Core.Data
                 return new SolidColorBrush(c);
             }
         }
+    }
 
-
-        public void Monitor()
-        {
-            IsFavorite = true;
-            GlobalSettings.Instance.AddToMonitoredStations(Data.commonid);
-        }
-
-        public void UnMonitor()
-        {
-            IsFavorite = false;
-            GlobalSettings.Instance.RemoveFromMonitoredStations(Data.commonid);
-        }
-
+    public class UIMonitoredStation : UIStation
+    {
+        public double MonitoredValue { get; set; }
+        public string MonitoredValueTypeString { get; set; }
+        public double AlarmValue { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +8,20 @@ using System.Threading.Tasks;
 
 namespace Pegelalarm.Core.Data
 {
+    [JsonObject(MemberSerialization=MemberSerialization.OptIn)]
     public class Alarm : Screen
     {
-        
+        private bool canSetAlarm;
+
+        public bool CanSetAlarm
+        {
+            get { return canSetAlarm; }
+            set { canSetAlarm = value; NotifyOfPropertyChange(); }
+        }
+
         private double alarmValue;
 
+        [JsonProperty]
         public double AlarmValue
         {
             get { return alarmValue; }
@@ -28,14 +38,22 @@ namespace Pegelalarm.Core.Data
 
         private MetricKind metricKind;
 
+        [JsonProperty]
         public MetricKind MetricKind
         {
             get { return metricKind; }
-            set { metricKind = value; NotifyOfPropertyChange(); }
+            set {
+                metricKind = value;
+                NotifyOfPropertyChange();
+                NotifyOfPropertyChange(() => MetricKindString);
+            }
         }
+
+        public string MetricKindString => MetricKind == MetricKind.Height ? "cm" : "m³/s";
 
         private WaterKind waterKind;
 
+        [JsonProperty]
         public WaterKind WaterKind
         {
             get { return waterKind; }
@@ -47,6 +65,9 @@ namespace Pegelalarm.Core.Data
             }
         }
 
-        public string WaterKindString => WaterKind == WaterKind.Highwater ? "Hochwasser" : "Niedrigwasser";
+        public string WaterKindString => WaterKind == WaterKind.Highwater ? "(Hochwasser)" : "(Niedrigwasser)";
+
+        [JsonProperty]
+        public string StationId { get; set; }
     }
 }

@@ -48,6 +48,7 @@ namespace Pegelalarm.Controls
 
         private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
+            if (samples == null || samples.Count == 0) return;
             AlarmValueChanged?.Invoke(this, e.NewValue);
         }
 
@@ -74,9 +75,9 @@ namespace Pegelalarm.Controls
 
         public void Draw()
         {
+            DrawingArea.Children.Clear();
             if (samples == null || samples.Count == 0)
             {
-                DrawingArea.Children.Clear();
                 NoDataText.Visibility = Visibility.Visible;
                 MinYLabel.Text = "";
                 CenterYLabel.Text = "";
@@ -128,13 +129,12 @@ namespace Pegelalarm.Controls
 
             if (alarmValue != 0)
             {
-                var alarmGrid = this.Resources["alarmGrid"] as StackPanel;
                 DrawingArea.Children.Add(alarmGrid);
                 Canvas.SetTop(alarmGrid, YforValue(alarmValue,max));
             }
+            
             if (warnValue != 0)
             {
-                var warnGrid = this.Resources["warnGrid"] as StackPanel;
                 DrawingArea.Children.Add(warnGrid);
                 Canvas.SetTop(warnGrid, YforValue(warnValue,max));
             }

@@ -29,7 +29,6 @@ namespace Pegelalarm.Views
         public DetailView()
         {
             this.InitializeComponent();
-            this.Chart.AlarmValueChanged += Chart_AlarmValueChanged;
             this.Chart.ShowSlider(false, 0);
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
         }
@@ -37,6 +36,7 @@ namespace Pegelalarm.Views
         private void Chart_AlarmValueChanged(object sender, double e)
         {
             ViewModel.Alarm.AlarmValue = e;
+            ViewModel.AlarmChanged();
         }
 
         public DetailViewModel ViewModel => DataContext as DetailViewModel;
@@ -44,21 +44,34 @@ namespace Pegelalarm.Views
 
         public void ConfigChart(double warnValue, double alarmValue, List<Sample> samples)
         {
+            if (samples.Count == 0) Chart.ShowSlider(false, 0);
             Chart.SetValues(warnValue, alarmValue, samples);
         }
 
         private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            this.Chart.AlarmValueChanged -= Chart_AlarmValueChanged;
+            this.Chart.AlarmValueChanged += Chart_AlarmValueChanged;
             var kind = (sender as MenuFlyoutItem).CommandParameter == "high" ? WaterKind.Highwater : WaterKind.Lowwater;
 
             ViewModel.AlarmActivated(kind);
+            Chart.ShowSlider(true, 0);
+        }
+
+        public void ShowAlarmSlider()
+        {
+            this.Chart.AlarmValueChanged -= Chart_AlarmValueChanged;
+            this.Chart.AlarmValueChanged += Chart_AlarmValueChanged;
             Chart.ShowSlider(true, ViewModel.Alarm.AlarmValue);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.Alarm.HasAlarm = false;
+            ViewModel.Alarm.AlarmValue = 0;
             Chart.ShowSlider(false,0);
+            this.Chart.AlarmValueChanged -= Chart_AlarmValueChanged;
+            ViewModel.RemoveAlarm();
         }
     }
 }

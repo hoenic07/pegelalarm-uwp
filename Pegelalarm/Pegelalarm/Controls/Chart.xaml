@@ -10,14 +10,7 @@
     d:DesignWidth="400" Foreground="Black">
 
     <UserControl.Resources>
-        <StackPanel x:Key="warnGrid" Orientation="Vertical">
-            <Rectangle Height="2" Fill="Orange"/>
-            <TextBlock Text="Vorgeschlagene Warngrenze" Foreground="Orange"/>
-        </StackPanel>
-        <StackPanel x:Key="alarmGrid" Orientation="Vertical">
-            <Rectangle Height="2" Fill="Red"/>
-            <TextBlock Text="Vorgeschlagene Alarmgrenze" Foreground="Red"/>
-        </StackPanel>
+        
     </UserControl.Resources>
 
     <Grid Background="White" >
@@ -33,24 +26,31 @@
 
         <!--Chart area-->
         <Canvas x:Name="DrawingArea" Grid.Column="2" Grid.Row="0">
-            
+            <StackPanel x:Name="warnGrid" Orientation="Vertical">
+                <Rectangle Height="2" Fill="Orange"/>
+                <TextBlock Text="Vorgeschlagene Warngrenze" Foreground="Orange" Margin="6,0"/>
+            </StackPanel>
+            <StackPanel x:Name="alarmGrid" Orientation="Vertical">
+                <Rectangle Height="2" Fill="Red"/>
+                <TextBlock Text="Vorgeschlagene Alarmgrenze" Foreground="Red" Margin="6,0"/>
+            </StackPanel>
         </Canvas>
 
         <TextBlock x:Name="NoDataText" Text="Keine Daten verfügbar" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Center"/>
 
         <!--Y axis-->
         <Grid Grid.Column="1" Grid.Row="0">
-            <TextBlock x:Name="MaxYLabel" Text="-" VerticalAlignment="Top" TextAlignment="Right" Margin="0,0,5,0"/>
-            <TextBlock x:Name="CenterYLabel" Text="-" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,5,0"/>
-            <TextBlock x:Name="MinYLabel" Text="-" VerticalAlignment="Bottom" TextAlignment="Right" Margin="0,0,5,0"/>
+            <TextBlock x:Name="MaxYLabel" Text="-" VerticalAlignment="Top" TextAlignment="Right" Margin="0,0,6,0"/>
+            <TextBlock x:Name="CenterYLabel" Text="-" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,6,0"/>
+            <TextBlock x:Name="MinYLabel" Text="-" VerticalAlignment="Bottom" TextAlignment="Right" Margin="0,0,6,0"/>
             
             <Rectangle HorizontalAlignment="Right" Width="2" Fill="Black"/>
         </Grid>
 
         <!--X axis-->
         <Grid Grid.Column="2" Grid.Row="1">
-            <TextBlock x:Name="MinXLabel" Text="-" HorizontalAlignment="Left"/>
-            <TextBlock x:Name="MaxXLabel" Text="-" HorizontalAlignment="Right"/>
+            <TextBlock x:Name="MinXLabel" Text="-" HorizontalAlignment="Left" Margin="0,2,0,0"/>
+            <TextBlock x:Name="MaxXLabel" Text="-" HorizontalAlignment="Right" Margin="0,2,0,0"/>
 
             <Rectangle VerticalAlignment="Top" Height="2" Fill="Black"/>
         </Grid>
