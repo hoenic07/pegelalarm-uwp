@@ -14,5 +14,7 @@ namespace Pegelalarm.Core.Network
         public const string BASE_URI = "";
 
         public const string MAP_TOKEN = "";
+        
+		public const string HOCKEY_TOKEN = "";
     }
 }

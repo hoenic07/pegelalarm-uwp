@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using Microsoft.HockeyApp;
 using Pegelalarm.Core.Network;
 using Pegelalarm.ViewModels;
 using Pegelalarm.Views;
@@ -28,6 +29,7 @@ namespace Pegelalarm
         public App()
         {
             InitializeComponent();
+            HockeyClient.Current.Configure(ApiConstants.HOCKEY_TOKEN);
         }
 
         protected override void Configure()
