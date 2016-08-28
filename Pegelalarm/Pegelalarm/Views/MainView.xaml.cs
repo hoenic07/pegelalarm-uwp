@@ -23,6 +23,9 @@ using Windows.UI.Core;
 using Windows.UI.Popups;
 using System.Threading.Tasks;
 using Pegelalarm.Controls;
+using Windows.Foundation.Metadata;
+using Windows.UI.ViewManagement;
+using Pegelalarm.Core.Network;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -33,27 +36,38 @@ namespace Pegelalarm.Views
     /// </summary>
     public sealed partial class MainView : Page, IMainView
     {
-        private List<MapItem> stations;
+        #region Members
 
+        private List<MapItem> stations;
         private MapPolygon radiusDisplay;
         private MapPolygon alarmDisplay;
 
-        public MainView()
-        {
-            this.InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Required;
-            Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            stations = new List<MapItem>();
-        }
+        #endregion
+
+        #region Properties
 
         public MainViewModel ViewModel
         {
             get { return DataContext as MainViewModel; }
         }
 
+        #endregion
+
+        public MainView()
+        {
+            this.InitializeComponent();
+            NavigationCacheMode = NavigationCacheMode.Required;
+            stations = new List<MapItem>();
+            Map.MapServiceToken = ApiConstants.MAP_TOKEN;
+            CustomizeDeviceFamilyColors();
+        }
+
+        #region Page Events
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             (DataContext as MainViewModel).PropertyChanged += MainView_PropertyChanged;
         }
 
@@ -61,7 +75,6 @@ namespace Pegelalarm.Views
         {
             base.OnNavigatedFrom(e);
             (DataContext as MainViewModel).PropertyChanged -= MainView_PropertyChanged;
-
         }
 
         private void MainView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -76,6 +89,10 @@ namespace Pegelalarm.Views
                 UpdateAlarmCircle();
             }
         }
+
+        #endregion
+
+        #region IMainView Interface
 
         public async void ShowMapAt(double lat, double lon, int zoom = 10)
         {
@@ -122,21 +139,22 @@ namespace Pegelalarm.Views
 
         }
 
-        private MapPolygon CreateCircle(Geopoint point, int radius)
+        public void SetPositionOnMap()
         {
-            MapPolygon mp = new MapPolygon();
-            
-            var list = new List<BasicGeoposition>();
-            for (int i = 0; i < 360; i++)
-            {
-                var p = point.CalculateDerivedPosition(radius, i);
-                list.Add(p.Position);
-            }
-            
-            mp.Path = new Geopath(list);
-            return mp;
+            var d = new MessageDialog("Klicke nun auf die Karte um deine Position zu festzulegen!");
+            d.Commands.Add(new UICommand("Ok"));
+            d.ShowAsync();
+            Map.MapTapped += Map_MapTapped;
         }
 
+        #endregion
+
+        #region Control Events
+
+        public void SetPositionOnMap(object sender, RoutedEventArgs e)
+        {
+            SetPositionOnMap();
+        }
 
         private void SplitViewOpenClose(object sender, RoutedEventArgs e)
         {
@@ -155,11 +173,6 @@ namespace Pegelalarm.Views
             }
         }
 
-        private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void Map_MapTapped(MapControl sender, MapInputEventArgs args)
         {
             Map.MapTapped -= Map_MapTapped;
@@ -168,10 +181,35 @@ namespace Pegelalarm.Views
             ViewModel.UpdateDisplayedStations();
         }
 
-        private void SetPositionOnMap(object sender, RoutedEventArgs e)
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            new MessageDialog("Klicke nun auf die Karte um deine Position zu festzulegen!").ShowAsync();
-            Map.MapTapped += Map_MapTapped;
+            SplitView.IsPaneOpen = false;
+            ViewModel?.Show((sender as ListView).SelectedIndex);
+        }
+
+        private void ShowAbout(object sender, RoutedEventArgs e)
+        {
+            SplitView.IsPaneOpen = true;
+            new InfoDialog().ShowAsync();
+        }
+
+        #endregion
+
+        #region Other Methods
+
+        private MapPolygon CreateCircle(Geopoint point, int radius)
+        {
+            MapPolygon mp = new MapPolygon();
+            
+            var list = new List<BasicGeoposition>();
+            for (int i = 0; i < 360; i++)
+            {
+                var p = point.CalculateDerivedPosition(radius, i);
+                list.Add(p.Position);
+            }
+            
+            mp.Path = new Geopath(list);
+            return mp;
         }
 
         private void UpdateDisplayRadiusCircle()
@@ -200,16 +238,41 @@ namespace Pegelalarm.Views
             Map.MapElements.Add(alarmDisplay);
         }
 
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void CustomizeDeviceFamilyColors()
         {
-            SplitView.IsPaneOpen = false;
-            ViewModel.Show((sender as ListView).SelectedIndex);
+            var mainColor = (Color)App.Current.Resources["MainColor"];
+            var darkerMainColor = (Color)App.Current.Resources["DarkerMainColor"];
+
+            //PC customization
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.ApplicationView"))
+            {
+                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                if (titleBar != null)
+                {
+                    titleBar.ButtonBackgroundColor = mainColor;
+                    titleBar.ButtonForegroundColor = Colors.White;
+                    titleBar.ButtonPressedBackgroundColor = darkerMainColor;
+                    titleBar.ButtonHoverBackgroundColor = darkerMainColor;
+                    titleBar.BackgroundColor = mainColor;
+                    titleBar.ForegroundColor = Colors.White;
+                }
+            }
+
+            //Mobile customization
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                var statusBar = StatusBar.GetForCurrentView();
+                if (statusBar != null)
+                {
+                    
+                    statusBar.BackgroundOpacity = 1;
+                    statusBar.BackgroundColor = mainColor;
+                    statusBar.ForegroundColor = Colors.White;
+                }
+            }
         }
 
-        private void ShowAbout(object sender, RoutedEventArgs e)
-        {
-            SplitView.IsPaneOpen = true;
-            new InfoDialog().ShowAsync();
-        }
+        #endregion
+
     }
 }

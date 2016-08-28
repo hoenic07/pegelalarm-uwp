@@ -15,6 +15,7 @@ using System.Collections.Specialized;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.ApplicationModel.Background;
 using Pegelalarm.Core.Persistance;
+using Windows.UI.Popups;
 
 namespace Pegelalarm.ViewModels
 {
@@ -128,6 +129,12 @@ namespace Pegelalarm.ViewModels
             set { isMonitoredListDisplayed = value; NotifyOfPropertyChange(); }
         }
         
+        public bool AlarmNotificationsOn
+        {
+            get { return GlobalSettings.Instance.AlarmRangeNotificationsOn; }
+            set { GlobalSettings.Instance.AlarmRangeNotificationsOn = value; NotifyOfPropertyChange(); }
+        }
+
         #endregion
 
         #region Ctor
@@ -210,6 +217,10 @@ namespace Pegelalarm.ViewModels
                 Location = new MapItem(p.Latitude, p.Longitude, MapItemKind.Location, null);
                 UpdateDisplayedStations();
             }
+            else
+            {
+                view.SetPositionOnMap();
+            }
         }
 
         public void IconClick(MapElementClickEventArgs o)
@@ -281,6 +292,10 @@ namespace Pegelalarm.ViewModels
                     DisplayedStations.Add(new UIStation { Data = st });
                 }
             }
+            else
+            {
+                new MessageDialog("Daten konnten nicht abgerufen werden.", "Fehler").ShowAsync();
+            }
             NotifyOfPropertyChange(() => DisplayedStations);
 
             LoadMonitoredStations();
@@ -297,6 +312,7 @@ namespace Pegelalarm.ViewModels
                 {
                     var uimst = new UIMonitoredStation();
                     uimst.Data = sta.Data;
+                    uimst.WaterKindStringPlain = st.WaterKindStringPlain;
                     uimst.AlarmValue = st.AlarmValue;
                     uimst.MonitoredValueTypeString = st.MetricKindString;
                     uimst.MonitoredValue = sta.Data.data.FirstOrDefault(d => d.Metric == st.MetricKind)?.value ?? 0;
@@ -309,6 +325,7 @@ namespace Pegelalarm.ViewModels
 
         public async Task RegisterBackgroundTask()
         {
+            await Task.Delay(1000);
             var taskRegistered = false;
             var exampleTaskName = "PeriodicStationTask";
 
@@ -326,11 +343,12 @@ namespace Pegelalarm.ViewModels
                 var builder = new BackgroundTaskBuilder();
 
                 builder.Name = "PeriodicStationTask";
-                builder.TaskEntryPoint = "Pegelalarm.Core.Tasks.PeriodicStationTask";
+                builder.TaskEntryPoint = "BackgroundTask.PeriodicStationTask";
                 builder.SetTrigger(new TimeTrigger(30, false));
 
                 BackgroundTaskRegistration task = builder.Register();
-                await BackgroundExecutionManager.RequestAccessAsync();
+                var a = await BackgroundExecutionManager.RequestAccessAsync();
+                
             }
 
         }

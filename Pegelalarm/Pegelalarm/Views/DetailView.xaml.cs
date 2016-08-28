@@ -30,6 +30,11 @@ namespace Pegelalarm.Views
         {
             this.InitializeComponent();
             this.Chart.ShowSlider(false, 0);
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
         }
 
@@ -52,7 +57,7 @@ namespace Pegelalarm.Views
         {
             this.Chart.AlarmValueChanged -= Chart_AlarmValueChanged;
             this.Chart.AlarmValueChanged += Chart_AlarmValueChanged;
-            var kind = (sender as MenuFlyoutItem).CommandParameter == "high" ? WaterKind.Highwater : WaterKind.Lowwater;
+            var kind = (sender as MenuFlyoutItem).CommandParameter as string == "high" ? WaterKind.Highwater : WaterKind.Lowwater;
 
             ViewModel.AlarmActivated(kind);
             Chart.ShowSlider(true, 0);

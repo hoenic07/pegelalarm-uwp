@@ -11,6 +11,8 @@ namespace Pegelalarm.Core.Network
         /// <summary>
         /// Visit http://www.pegelalarm.at to get this uri 
         /// </summary>
-        public const string BASE_URI = "http://api.pegelalarm.at/api/";
+        public const string BASE_URI = "";
+
+        public const string MAP_TOKEN = "";
     }
 }

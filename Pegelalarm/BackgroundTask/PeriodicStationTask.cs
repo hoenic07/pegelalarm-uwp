@@ -1,5 +1,4 @@
-﻿using Caliburn.Micro;
-using Pegelalarm.Core.Data;
+﻿using Pegelalarm.Core.Data;
 using Pegelalarm.Core.Network;
 using Pegelalarm.Core.Network.Data;
 using Pegelalarm.Core.Persistance;
@@ -15,9 +14,9 @@ using Windows.Data.Xml.Dom;
 using Windows.Devices.Geolocation;
 using Windows.UI.Notifications;
 
-namespace Pegelalarm.Core.Tasks
+namespace BackgroundTask
 {
-    public class PeriodicStationTask : IBackgroundTask
+    public sealed class PeriodicStationTask : IBackgroundTask
     {
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
@@ -33,6 +32,15 @@ namespace Pegelalarm.Core.Tasks
             var gp = new Geopoint(new BasicGeoposition { Latitude = loc.Latitude, Longitude = loc.Longitude });
             var bb = GeoUtils.CalculateBoundingBoxAroundPosition(gp, loc.DisplayRadius * 1000);
 
+            var monitoredStations = await GlobalSettings.Instance.GetMonitoredStations();
+            var alarmNotify = GlobalSettings.Instance.AlarmRangeNotificationsOn;
+
+            if (monitoredStations.Count == 0 && !alarmNotify)
+            {
+                def.Complete();
+                return;
+            }
+
             var allStations = await (new WebService().GetStationsBy(bb));
 
             if (!allStations.IsSuccessful)
@@ -41,7 +49,7 @@ namespace Pegelalarm.Core.Tasks
                 return;
             }
 
-            var monitoredStations = await GlobalSettings.Instance.GetMonitoredStations();
+            
 
             foreach (var station in allStations.Payload)
             {
@@ -62,7 +70,7 @@ namespace Pegelalarm.Core.Tasks
                     if(monFlow.WaterKind==WaterKind.Highwater && flow.value >= monFlow.AlarmValue ||
                        monFlow.WaterKind == WaterKind.Lowwater && flow.value <= monFlow.AlarmValue)
                     {
-                        ShowToast("Alarm!", station.name + " " + monFlow.WaterKindString );
+                        ShowToast($"{monFlow.WaterKindString}-Alarm!", $"{station.name}, {flow.value} {monFlow.MetricKindString}");
                         continue;
                     }
                 }
@@ -72,14 +80,14 @@ namespace Pegelalarm.Core.Tasks
                     if (monHeight.WaterKind == WaterKind.Highwater && height.value >= monHeight.AlarmValue ||
                        monHeight.WaterKind == WaterKind.Lowwater && height.value <= monHeight.AlarmValue)
                     {
-                        ShowToast("Alarm!", station.name + " " + monHeight.WaterKindString);
+                        ShowToast($"{monFlow.WaterKindString}-Alarm!", $"{station.name}, {flow.value} {monFlow.MetricKindString}");
                         continue;
                     }
                 }
 
-                if (isInAlarmRadius &&station.situation != 100 && station.situation >= 20)
+                if (isInAlarmRadius && station.situation != 100 && station.situation >= 20 && alarmNotify)
                 {
-                    ShowToast("Alarm!", station.name+ " - "+ uist.SituationString);
+                    ShowToast("Alarm!", station.name + " - " + uist.SituationString);
                     continue;
                 }
             }

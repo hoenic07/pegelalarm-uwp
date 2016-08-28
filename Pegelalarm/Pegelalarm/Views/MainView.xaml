@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
     xmlns:cal="using:Caliburn.Micro"
-    mc:Ignorable="d" RequestedTheme="Light">
+    mc:Ignorable="d">
 
     <Page.Resources>
 
@@ -46,28 +46,20 @@
             <Grid Margin="6,12" cal:Message.Attach="[Event Tapped]=[Action ShowDetail($dataContext)]" Background="Transparent">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <!--Color-->
                     <ColumnDefinition Width="*"/>
-                    <!--Name / Situation-->
                     <ColumnDefinition Width="Auto"/>
-                    <!--Height / Trend-->
                     <ColumnDefinition Width="Auto"/>
-                    <!--Fav-->
                 </Grid.ColumnDefinitions>
-                <Rectangle Width="10" Fill="{Binding SituationColor}"/>
 
-                <TextBlock Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
-                    <Bold><Run Text="{Binding Data.name}" /></Bold>
-                    <LineBreak/>
-                    <Run Text="{Binding SituationString}" FontSize="12"/>
+                <TextBlock Grid.Column="1" Margin="0,0,12,0" VerticalAlignment="Center">
+                    <Bold><Run Text="{Binding Data.name}" /></Bold> <LineBreak/>
+                    <Run Text="Warnen bei"/> <Run Text="{Binding WaterKindStringPlain}"/>
                 </TextBlock>
 
-                <StackPanel Grid.Column="2" Orientation="Vertical">
-                    <TextBlock TextAlignment="Right">
-                            <Run Text="{Binding MonitoredValue}"/> <Run Text="{Binding MonitoredValueTypeString}"/><LineBreak/>
-                            <Run Text="{Binding AlarmValue}"/> <Run Text="{Binding MonitoredValueTypeString}"/><LineBreak/>
-                    </TextBlock>
-                </StackPanel>
+                <TextBlock  Grid.Column="2" TextAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Center">
+                            <Run Text="Alarmgrenze:"/> <Run Text="{Binding MonitoredValue}"/> <Run Text="{Binding MonitoredValueTypeString}"/><LineBreak/>
+                            <Run Text="Aktuell:"/> <Run Text="{Binding AlarmValue}"/> <Run Text="{Binding MonitoredValueTypeString}"/>
+                </TextBlock>
             </Grid>
         </DataTemplate>
 
@@ -77,22 +69,25 @@
                OpenPaneLength="250" DisplayMode="Overlay">
         <SplitView.Pane>
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <StackPanel Background="{StaticResource BlueBrush}">
-                    <ListView  SelectionChanged="ListView_SelectionChanged">
+                <StackPanel>
+                    <ListView SelectionChanged="ListView_SelectionChanged" SelectedIndex="0">
                         <TextBlock Text="Karte anzeigen" />
                         <TextBlock Text="Liste der Stationen" Grid.Row="1" Margin="0,12,0,12"/>
                         <TextBlock Text="Überwachte Stationen" Grid.Row="2"/>
                     </ListView>
 
-                    <Rectangle Height="2" Margin="0,6" Fill="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+                    <Rectangle Height="2" Margin="0,6" Fill="{StaticResource MainColorBursh}"/>
 
                     <!--Displayradius-->
-                    <StackPanel Orientation="Vertical" Margin="12">
+                    <StackPanel Orientation="Horizontal" Margin="12">
                         <TextBlock TextWrapping="WrapWholeWords">
                         <Run Text="Heimatradius "/><LineBreak/>
                         <Run FontSize="18" Text="{Binding DisplayRange, FallbackValue='0'}"/> <Run FontSize="18" Text="km"/>
                         </TextBlock>
-                        <Button Content="Ändern">
+                        <Button Margin="12,0,0,0">
+                            <Button.Content>
+                                <SymbolIcon Symbol="Edit"/>
+                            </Button.Content>
                             <Button.Flyout>
                                 <Flyout>
                                     <Slider Minimum="5" Maximum="100" Width="150" Value="{Binding DisplayRange, Mode=TwoWay}"/>
@@ -102,23 +97,56 @@
                     </StackPanel>
 
                     <!--Alarmradius-->
-                    <StackPanel Orientation="Vertical" Margin="12">
+                    <StackPanel Orientation="Horizontal" Margin="12">
                         <TextBlock TextWrapping="WrapWholeWords">
                         <Run Text="Alarmradius "/><LineBreak/>
                         <Run FontSize="18" Text="{Binding AlarmRange, FallbackValue='0'}"/> <Run FontSize="18" Text="km"/>
                         </TextBlock>
-                        <Button Content="Ändern">
+                        
+                        <Button Margin="12,0,0,0">
+                            <Button.Content>
+                                <SymbolIcon Symbol="Edit"/>
+                            </Button.Content>
                             <Button.Flyout>
                                 <Flyout>
-                                    <Slider Minimum="1" Maximum="50" Width="150" Value="{Binding AlarmRange, Mode=TwoWay}"/>
+                                    <Slider Minimum="1" Maximum="{Binding DisplayRange}" Width="150" Value="{Binding AlarmRange, Mode=TwoWay}"/>
                                 </Flyout>
                             </Button.Flyout>
                         </Button>
                     </StackPanel>
 
-                    <Rectangle Height="2" Margin="0,6" Fill="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+                    <ToggleSwitch Margin="12,0,12,12" IsOn="{Binding AlarmNotificationsOn, Mode=TwoWay}" Header="Benachrichtungen für &#x0a;Alarm-Radius"/>
+
+                    <Rectangle Height="2" Margin="0,6" Fill="{StaticResource MainColorBursh}"/>
 
                     <Button Margin="12,6" Click="ShowAbout">Über Pegelalarm</Button>
+                    <Button Margin="12,6" Content="Legende">
+                        <Button.Flyout>
+                            <Flyout>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Rectangle Grid.Row="0" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="Green"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Normal, Warngrenze, Niedrigwasser" TextWrapping="Wrap"/>
+                                    <Rectangle Grid.Row="1" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="Yellow"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="Alarmgrenze" TextWrapping="Wrap"/>
+                                    <Rectangle Grid.Row="2" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="Red"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="Regionale oder Nationale Überflutungen" TextWrapping="Wrap"/>
+                                    <Rectangle Grid.Row="3" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="Gray"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="Unbekannt" TextWrapping="Wrap"/>
+                                </Grid>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
                 </StackPanel>
             </ScrollViewer>
         </SplitView.Pane>
@@ -126,13 +154,13 @@
             <Grid>
                 <!--Map-->
                 <Grid Name="mapGrid" Visibility="{Binding IsMapDisplayed, Converter={StaticResource BooleanVisibilityConverter}}">
-                    <maps:MapControl x:Name="Map" cal:Message.Attach="[Event MapElementClick]=[Action IconClick($eventArgs)]" ZoomInteractionMode="GestureAndControl" TiltInteractionMode="GestureAndControl" RotateInteractionMode="GestureAndControl" LandmarksVisible="True"/>
+                    <maps:MapControl x:Name="Map" MapServiceToken="jqcyQV3nPzocUK4znhR2~tbJH_j7Tlj4qPBPZHp4m8g~At_s-UTS7WCitTE7j8wdWA9EfcTvnW6LvcTvkdpaunKZ_yunDougRvuZj4f_xtlZ" cal:Message.Attach="[Event MapElementClick]=[Action IconClick($eventArgs)]" ZoomInteractionMode="Auto" TiltInteractionMode="Auto" RotateInteractionMode="Auto" LandmarksVisible="True"/>
 
                     <Button FontFamily="Segoe MDL2 Assets" Content="&#xE128;" FontSize="24"
-                    Width="50" Height="50" Background="{StaticResource BlueBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" Click="SwitchMapStyle"/>
+                    Width="50" Height="50" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" Click="SwitchMapStyle"/>
 
                     <Button FontFamily="Segoe MDL2 Assets" Content="&#xE81D;" FontSize="24" Margin="0,60,0,0"
-                    Width="50" Height="50" Background="{StaticResource BlueBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" >
+                    Width="50" Height="50" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" >
                         <Button.Flyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem Text="Meine Position" cal:Message.Attach="[Event Click]=[Action GetMyLocation]"/>
@@ -142,7 +170,7 @@
                     </Button>
 
                     <Button FontFamily="Segoe MDL2 Assets" Content="&#xE700;" FontSize="24"
-                    Width="50" Height="50" Background="{StaticResource BlueBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SplitViewOpenClose"/>
+                    Width="50" Height="50" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SplitViewOpenClose"/>
 
                     <Grid Visibility="{Binding IsStationInfoDisplayed, Converter={StaticResource BooleanVisibilityConverter}}" VerticalAlignment="Bottom" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12">
 
@@ -163,7 +191,7 @@
                 </Grid>
 
                 <!--List of all displayed stations-->
-                <Grid Name="listGrid" Background="{StaticResource BlueBrush}" Visibility="{Binding IsListDisplayed, Converter={StaticResource BooleanVisibilityConverter}}">
+                <Grid Name="listGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="{Binding IsListDisplayed, Converter={StaticResource BooleanVisibilityConverter}}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
@@ -171,8 +199,8 @@
 
                     <StackPanel Orientation="Horizontal">
                         <Button FontFamily="Segoe MDL2 Assets" Content="&#xE700;" FontSize="24"
-                    Width="50" Height="50" Background="{StaticResource BlueBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SplitViewOpenClose"/>
-                        <TextBlock Text="Liste der Stationen" VerticalAlignment="Center" Margin="24,0,0,0" FontWeight="Bold" FontSize="20"/>
+                    Width="50" Height="50" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SplitViewOpenClose"/>
+                        <TextBlock Text="Liste der Stationen" VerticalAlignment="Center" Margin="12,0,0,0" FontWeight="Bold" FontSize="20"/>
                     </StackPanel>
 
                     <ListView Grid.Row="1" ItemsSource="{Binding DisplayedStations}" ItemTemplate="{StaticResource StationTemplate}">
@@ -187,19 +215,22 @@
                 </Grid>
 
                 <!--List of monitored stations-->
-                <Grid Name="monitoredListGrid" Background="{StaticResource BlueBrush}" Visibility="{Binding IsMonitoredListDisplayed, Converter={StaticResource BooleanVisibilityConverter}}">
+                <Grid Name="monitoredListGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="{Binding IsMonitoredListDisplayed, Converter={StaticResource BooleanVisibilityConverter}}">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <StackPanel Orientation="Horizontal">
                         <Button FontFamily="Segoe MDL2 Assets" Content="&#xE700;" FontSize="24"
-                    Width="50" Height="50" Background="{StaticResource BlueBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SplitViewOpenClose"/>
-                        <TextBlock Text="Überwachte Stationen" VerticalAlignment="Center" Margin="24,0,0,0" FontWeight="Bold" FontSize="20"/>
+                    Width="50" Height="50" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SplitViewOpenClose"/>
+                        <TextBlock Text="Überwachte Stationen" VerticalAlignment="Center" Margin="12,0,0,0" FontWeight="Bold" FontSize="20"/>
                     </StackPanel>
 
-                    <ListView Grid.Row="1" ItemsSource="{Binding MonitoredStations}" ItemTemplate="{StaticResource MonitoredStationTemplate}">
+                    <TextBlock Grid.Row="1" Text="Für diese Stationen erhalten sie eine Benachrichtung, wenn der Alarmwert erreicht wird." Margin="12" TextWrapping="Wrap" Visibility="{Binding MonitoredStations, Converter={StaticResource CollectionVisibilityConverter}}"/>
+
+                    <ListView Grid.Row="2" ItemsSource="{Binding MonitoredStations}" ItemTemplate="{StaticResource MonitoredStationTemplate}">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

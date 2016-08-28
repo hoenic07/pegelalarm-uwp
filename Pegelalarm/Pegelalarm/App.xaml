@@ -7,13 +7,29 @@
     xmlns:caliburn="using:Caliburn.Micro">
 
     <caliburn:CaliburnApplication.Resources>
-        <con:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
-        <con:CollectionVisibilityConverter x:Key="CollectionVisibilityConverter"/>
-        <Color x:Key="BlueColor">#eeeeee</Color>
-        <Color x:Key="TransparentGreyColor">#33808080</Color>
-        <Color x:Key="TransparentRedColor">#33ff0000</Color>
-        <Color x:Key="DarkGreyColor">#333333</Color>
-        <SolidColorBrush x:Key="BlueBrush" Color="{StaticResource BlueColor}"/>
+
+        <ResourceDictionary>
+
+            <con:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter"/>
+            <con:CollectionVisibilityConverter x:Key="CollectionVisibilityConverter"/>
+            <Color x:Key="TransparentGreyColor">#33808080</Color>
+            <Color x:Key="TransparentRedColor">#33ff0000</Color>
+            <Color x:Key="DarkGreyColor">#333333</Color>
+            <Color x:Key="MainColor">#FF3232</Color>
+            <Color x:Key="DarkerMainColor">#BC143E</Color>
+            
+            <SolidColorBrush x:Key="MainColorBursh" Color="{StaticResource MainColor}"/>
+
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{StaticResource MainColor}" />
+                    <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{StaticResource MainColor}" />
+                    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{StaticResource MainColor}" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
     </caliburn:CaliburnApplication.Resources>
+
     
+
 </caliburn:CaliburnApplication>

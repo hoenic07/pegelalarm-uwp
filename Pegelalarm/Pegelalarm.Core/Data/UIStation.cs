@@ -74,6 +74,7 @@ namespace Pegelalarm.Core.Data
                     case -10:
                         c = Colors.Green; break;
                     case 100:
+                    case -100:
                         c = Colors.Gray; break;
                         //TODO: Out of date?
                 }
@@ -87,5 +88,6 @@ namespace Pegelalarm.Core.Data
         public double MonitoredValue { get; set; }
         public string MonitoredValueTypeString { get; set; }
         public double AlarmValue { get; set; }
+        public string WaterKindStringPlain { get; set; }
     }
 }

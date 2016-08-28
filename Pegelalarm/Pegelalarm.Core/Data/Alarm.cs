@@ -2,7 +2,9 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -45,14 +47,14 @@ namespace Pegelalarm.Core.Data
             set {
                 metricKind = value;
                 NotifyOfPropertyChange();
-                NotifyOfPropertyChange(() => MetricKindString);
+                NotifyOfPropertyChange(nameof(MetricKindString));
             }
         }
 
         public string MetricKindString => MetricKind == MetricKind.Height ? "cm" : "m³/s";
 
         private WaterKind waterKind;
-
+        
         [JsonProperty]
         public WaterKind WaterKind
         {
@@ -61,11 +63,13 @@ namespace Pegelalarm.Core.Data
             {
                 waterKind = value;
                 NotifyOfPropertyChange();
-                NotifyOfPropertyChange(() => WaterKindString);
+                NotifyOfPropertyChange(nameof(WaterKindString));
+                NotifyOfPropertyChange(nameof(WaterKindStringPlain));
             }
         }
 
-        public string WaterKindString => WaterKind == WaterKind.Highwater ? "(Hochwasser)" : "(Niedrigwasser)";
+        public string WaterKindString => $"({WaterKindStringPlain})";
+        public string WaterKindStringPlain => WaterKind == WaterKind.Highwater ? "Hochwasser" : "Niedrigwasser";
 
         [JsonProperty]
         public string StationId { get; set; }

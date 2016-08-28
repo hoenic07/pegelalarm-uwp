@@ -39,5 +39,10 @@ namespace Pegelalarm.Controls
         {
             Launcher.LaunchUriAsync(new Uri("https://github.com/hoenic07/pegelalarm-uwp"));
         }
+
+        private void Newtonsoft_Click(object sender, RoutedEventArgs e)
+        {
+            Launcher.LaunchUriAsync(new Uri("http://www.newtonsoft.com/json"));
+        }
     }
 }

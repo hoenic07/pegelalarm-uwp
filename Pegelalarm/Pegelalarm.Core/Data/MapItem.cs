@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
+using Windows.Graphics.Display;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml.Controls.Maps;
 
@@ -39,40 +40,31 @@ namespace Pegelalarm.Core.Data
             switch (kind)
             {
                 case MapItemKind.Location:
-                    name = "my_location"; break;
-                case MapItemKind.Home:
                     name = "my_home"; break;
                 case MapItemKind.Station:
-                    if(stationSituation== -100)
+
+                    switch (stationSituation)
                     {
-                        //blue = out of date
-                        name = "out_of_date"; break;
-                    }
-                    else if (stationSituation == 100)
-                    {
-                        //gray
-                        name = "unknown"; break;
-                    }
-                    else if (stationSituation >= 40)
-                    {
-                        //red
-                        name = "alarm_limit_reached"; break;
-                    }
-                    else if (stationSituation >= 30)
-                    {
-                        //yellow
-                        name = "report_limit_reached"; break;
-                    }
-                    else
-                    {
-                        //normal
-                        name = "normal"; break;
+                        case 50:
+                        case 40:
+                            name = "red"; break;
+                        case 30:
+                            name = "yellow"; break;
+                        case 20:
+                        case 10:
+                        case -10:
+                            name = "green"; break;
+                        case 100:
+                        case -100:
+                            name = "gray"; break;
+                            //TODO: Out of date?
                     }
                     break;
             }
 
-
-            var uri = "ms-appx:///Pegelalarm.Core/Assets/Pinpoints/" + name + ".png";
+            var px = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+            var size = px <= 2 ? 1 : 2;
+            var uri = "ms-appx:///Pegelalarm.Core/Assets/Pinpoints/" + name + "_" + size + ".png";
 
             return RandomAccessStreamReference.CreateFromUri(new Uri(uri, UriKind.RelativeOrAbsolute));
         }

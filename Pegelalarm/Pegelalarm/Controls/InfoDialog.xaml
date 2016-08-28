@@ -16,6 +16,14 @@
         </TextBlock>
         <HyperlinkButton Click="DataSource_Click">Datenquelle: www.pegelalarm.at</HyperlinkButton>
         <HyperlinkButton Click="Feedback_Click">Feedback: nik.hoesl@hotmail.com</HyperlinkButton>
+
+        <TextBlock Margin="0,12,0,0">Source Code unter:</TextBlock>
+
         <HyperlinkButton Click="Source_Click">https://github.com/hoenic07/pegelalarm-uwp</HyperlinkButton>
+
+        <TextBlock Margin="0,12,0,0">Open Source Libraries:</TextBlock>
+        <HyperlinkButton Click="Newtonsoft_Click">Newtonsoft.Json</HyperlinkButton>
+
+
     </StackPanel>
 </ContentDialog>

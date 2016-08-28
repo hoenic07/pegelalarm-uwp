@@ -29,7 +29,7 @@ namespace Pegelalarm.Core.Persistance
             }
         }
 
-        private string LocationRangeString = "location";
+        private const string LocationRangeString = "location";
 
         public LocationRange LocationRange
         {
@@ -43,6 +43,19 @@ namespace Pegelalarm.Core.Persistance
             }
         }
 
+        private const string AlarmRangeNotificationsOnString = "alarm";
+
+        public bool AlarmRangeNotificationsOn
+        {
+            get
+            {
+                return Get<bool>(AlarmRangeNotificationsOnString);
+            }
+            set
+            {
+                Save(AlarmRangeNotificationsOnString, value);
+            }
+        }
 
         private GlobalSettings()
         {
@@ -69,7 +82,9 @@ namespace Pegelalarm.Core.Persistance
         private void SetDefaultValues()
         {
             _defaultValues = new Dictionary<string, object>();
-            _defaultValues[LocationRangeString] = new LocationRange { Latitude = 0, Longitude = 0, AlarmRadius = 10, DisplayRadius = 50 };
+            _defaultValues[LocationRangeString] = new LocationRange { Latitude = 0, Longitude = 0, AlarmRadius = 10, DisplayRadius = 30 };
+            _defaultValues[LocationRangeString] = new LocationRange { Latitude = 0, Longitude = 0, AlarmRadius = 10, DisplayRadius = 30 };
+            _defaultValues[AlarmRangeNotificationsOnString] = true;
         }
 
         #region Storage Methods

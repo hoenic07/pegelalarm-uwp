@@ -12,5 +12,6 @@ namespace Pegelalarm.Views
 
         void ShowMapAt(double lat, double lon, int zoom = 10);
         void MapItemsChanged(object sender, NotifyCollectionChangedEventArgs e);
+        void SetPositionOnMap();
     }
 }

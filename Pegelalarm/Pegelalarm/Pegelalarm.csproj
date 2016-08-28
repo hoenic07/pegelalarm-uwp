@@ -103,7 +103,6 @@
     </Compile>
     <Compile Include="Converters\BooleanVisibilityConverter.cs" />
     <Compile Include="Converters\CollectionVisibilityConverter.cs" />
-    <Compile Include="PeriodicStationTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\DetailViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -197,10 +196,19 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BackgroundTask\BackgroundTask.csproj">
+      <Project>{d82cc6d7-bd5e-40bf-b6f7-792898be83d8}</Project>
+      <Name>BackgroundTask</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Pegelalarm.Core\Pegelalarm.Core.csproj">
       <Project>{9d9fb78d-eceb-4240-9e47-d0751bbadd40}</Project>
       <Name>Pegelalarm.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="WindowsMobile, Version=10.0.10240.0">
+      <Name>Windows Mobile Extensions for the UWP</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

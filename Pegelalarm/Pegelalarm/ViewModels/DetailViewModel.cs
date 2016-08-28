@@ -10,13 +10,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Popups;
 
 namespace Pegelalarm.ViewModels
 {
     public class DetailViewModel : Screen
     {
         #region Members
-
+        private bool isLoaded;
         private WebService webService;
         private IDetailView view;
         private List<Alarm> alarms;
@@ -121,6 +122,29 @@ namespace Pegelalarm.ViewModels
         protected override async void OnActivate()
         {
             base.OnActivate();
+
+            if (view != null)
+            {
+                Loaded();
+            }
+        }
+
+        protected override void OnViewLoaded(object view)
+        {
+            base.OnViewLoaded(view);
+            this.view = view as IDetailView;
+
+            if (this.IsActive)
+            {
+                Loaded();
+            }
+        }
+
+        public async void Loaded()
+        {
+            if (isLoaded) return;
+            isLoaded = true;
+
             Station = IoC.Get<MainViewModel>().DisplayedStations.FirstOrDefault(st => st.Data.commonid == StationId);
 
             var stations = await GlobalSettings.Instance.GetMonitoredStations();
@@ -146,11 +170,7 @@ namespace Pegelalarm.ViewModels
             LoadGraphData(true);
         }
 
-        protected override void OnViewLoaded(object view)
-        {
-            base.OnViewLoaded(view);
-            this.view = view as IDetailView;
-        }
+
 
         #endregion
 
@@ -187,6 +207,10 @@ namespace Pegelalarm.ViewModels
                 {
                     SelectedMetric = Metrics[1];
                 }
+            }
+            else
+            {
+                new MessageDialog("Daten konnten nicht abgerufen werden.", "Fehler").ShowAsync();
             }
         }
 
