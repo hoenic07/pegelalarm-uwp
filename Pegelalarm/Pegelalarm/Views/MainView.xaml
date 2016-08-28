@@ -154,7 +154,7 @@
             <Grid>
                 <!--Map-->
                 <Grid Name="mapGrid" Visibility="{Binding IsMapDisplayed, Converter={StaticResource BooleanVisibilityConverter}}">
-                    <maps:MapControl x:Name="Map" MapServiceToken="jqcyQV3nPzocUK4znhR2~tbJH_j7Tlj4qPBPZHp4m8g~At_s-UTS7WCitTE7j8wdWA9EfcTvnW6LvcTvkdpaunKZ_yunDougRvuZj4f_xtlZ" cal:Message.Attach="[Event MapElementClick]=[Action IconClick($eventArgs)]" ZoomInteractionMode="Auto" TiltInteractionMode="Auto" RotateInteractionMode="Auto" LandmarksVisible="True"/>
+                    <maps:MapControl x:Name="Map" cal:Message.Attach="[Event MapElementClick]=[Action IconClick($eventArgs)]" ZoomInteractionMode="Auto" TiltInteractionMode="Auto" RotateInteractionMode="Auto" LandmarksVisible="True"/>
 
                     <Button FontFamily="Segoe MDL2 Assets" Content="&#xE128;" FontSize="24"
                     Width="50" Height="50" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" Click="SwitchMapStyle"/>
