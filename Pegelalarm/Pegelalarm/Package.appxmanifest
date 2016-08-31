@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="5f2c0b0c-cc6f-4bc2-9056-b91afc9370c7" Publisher="CN=Niklas" Version="1.0.0.0" />
+  <Identity Name="38298hoenic07.Pegelalarm" Publisher="CN=6E41B677-83E8-44E8-BE75-0A11DF3ED5E2" Version="1.1.1.0" />
   <mp:PhoneIdentity PhoneProductId="5f2c0b0c-cc6f-4bc2-9056-b91afc9370c7" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>Pegelalarm</DisplayName>
-    <PublisherDisplayName>Niklas</PublisherDisplayName>
+    <DisplayName>PegelAlarm</DisplayName>
+    <PublisherDisplayName>rwrApps</PublisherDisplayName>
     <Logo>Assets\NewStoreLogo.png</Logo>
   </Properties>
   <Dependencies>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Pegelalarm.App">
-      <uap:VisualElements DisplayName="Pegelalarm" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="Pegelalarm" BackgroundColor="#FF3232">
+      <uap:VisualElements DisplayName="PegelAlarm" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="PegelAlarm" BackgroundColor="#FF3232">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\Square310x310Logo.png" Square71x71Logo="Assets\Square71x71Logo.png">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo" />

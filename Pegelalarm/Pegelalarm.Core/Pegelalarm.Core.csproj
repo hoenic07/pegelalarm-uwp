@@ -128,6 +128,8 @@
     <EmbeddedResource Include="Properties\Pegelalarm.Core.rd.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Pinpoints\blue_1.png" />
+    <Content Include="Assets\Pinpoints\blue_2.png" />
     <Content Include="Assets\Pinpoints\gray_1.png" />
     <Content Include="Assets\Pinpoints\gray_2.png" />
     <Content Include="Assets\Pinpoints\green_1.png" />

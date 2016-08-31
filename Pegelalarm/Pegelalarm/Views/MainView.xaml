@@ -32,7 +32,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock TextAlignment="Right">
-                                    <Run Text="{Binding value}"/> <Run Text="{Binding TypeString}"/>
+                                    <Run Text="{Binding value}"/> <Run Text="{Binding TypeString}"/> <Run Text="("/><Run Text="{Binding SourceDateString}"/><Run Text=")"/>
                                 </TextBlock>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

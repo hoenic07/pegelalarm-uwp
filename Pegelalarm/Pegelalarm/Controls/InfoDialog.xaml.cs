@@ -44,5 +44,15 @@ namespace Pegelalarm.Controls
         {
             Launcher.LaunchUriAsync(new Uri("http://www.newtonsoft.com/json"));
         }
+
+        private void Caliburn_Click(object sender, RoutedEventArgs e)
+        {
+            Launcher.LaunchUriAsync(new Uri("http://caliburnmicro.com/"));
+        }
+
+        private void Hockey_Click(object sender, RoutedEventArgs e)
+        {
+            Launcher.LaunchUriAsync(new Uri("https://github.com/bitstadium/HockeySDK-Windows"));
+        }
     }
 }

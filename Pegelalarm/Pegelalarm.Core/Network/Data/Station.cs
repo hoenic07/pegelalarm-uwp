@@ -52,6 +52,31 @@ namespace Pegelalarm.Core.Network.Data
             get { return type.Contains("height") ? MetricKind.Height:MetricKind.Flow; }
         }
 
+
+        public string SourceDateString
+        {
+            get
+            {
+                if (sourceDate == null) return null;
+                var date = sourceDate.DateFromString();
+
+                var diff = DateTime.Now - date;
+
+                if(date.Date == DateTime.Today)
+                {
+                    return date.ToString("t");
+                }
+                else if(date.Year==DateTime.Today.Year)
+                {
+                    return date.ToString("m");
+                }
+                else
+                {
+                    return date.ToString("d");
+                }
+            }
+        }
+
         public float value { get; set; }
         public string requestDate { get; set; }
         public string sourceDate { get; set; }

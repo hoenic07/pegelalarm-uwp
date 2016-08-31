@@ -6,12 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="Über Pegelalarm"
+    Title="Über PegelAlarm"
     PrimaryButtonText="Ok">
 
     <StackPanel>
         <TextBlock Margin="0,12,0,12">
-            <Run Text="Pegelalarm 1.0"/><LineBreak/>
+            <Run Text="PegelAlarm 1.0"/><LineBreak/>
             <Run Text="Umsetzung: Niklas Hösl"/>
         </TextBlock>
         <HyperlinkButton Click="DataSource_Click">Datenquelle: www.pegelalarm.at</HyperlinkButton>
@@ -23,6 +23,8 @@
 
         <TextBlock Margin="0,12,0,0">Open Source Libraries:</TextBlock>
         <HyperlinkButton Click="Newtonsoft_Click">Newtonsoft.Json</HyperlinkButton>
+        <HyperlinkButton Click="Caliburn_Click">Caliburn.Micro</HyperlinkButton>
+        <HyperlinkButton Click="Hockey_Click">HockeySDK.UWP</HyperlinkButton>
 
 
     </StackPanel>

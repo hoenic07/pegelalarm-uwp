@@ -91,8 +91,7 @@ namespace Pegelalarm.Controls
             NoDataText.Visibility = Visibility.Collapsed;
 
             var min = 0;//Math.Min(warnValue, Math.Min(alarmValue, points.Min(d => d.Y)));
-            var max = Math.Max(warnValue, Math.Max(alarmValue, samples.Max(d => d.value)));
-            max = Math.Ceiling((max / 100)) * 100 + 100;
+            var max = Math.Max(warnValue, Math.Max(alarmValue, samples.Max(d => d.value))) * 1.25;
             
             // set axis value
 
