@@ -26,14 +26,14 @@ namespace Pegelalarm.Core.Data
         {
             Icon = new MapIcon();
             Icon.Location = new Geopoint(new BasicGeoposition { Latitude = lat, Longitude = lon });
-            Icon.Image = ImageForKind(kind, st != null ? st.situation : 0);
+            Icon.Image = ImageForKind(kind, st != null ? st.situation : 0, st?.data.All(d => d.IsOutOfDate)??false);
             Icon.NormalizedAnchorPoint = new Windows.Foundation.Point(0.5, 1);
             this.Kind = kind;
             this.ID = st != null ? st.commonid : "";
         }
 
 
-        private IRandomAccessStreamReference ImageForKind(MapItemKind kind, int stationSituation)
+        private IRandomAccessStreamReference ImageForKind(MapItemKind kind, int stationSituation, bool isOutOfDate)
         {
             var name = "";
 
@@ -55,10 +55,14 @@ namespace Pegelalarm.Core.Data
                         case -10:
                             name = "green"; break;
                         case 100:
-                        case -100:
-                            name = "gray"; break;
-                            //TODO: Out of date?
+                            name = "blue"; break;
                     }
+
+                    if (isOutOfDate)
+                    {
+                        name = "gray";
+                    }
+
                     break;
             }
 

@@ -178,6 +178,8 @@ namespace Pegelalarm.ViewModels
 
         private void Loaded()
         {
+            LoadMonitoredStations();
+
             if (isLoaded) return;
 
             MapItems.CollectionChanged -= this.view.MapItemsChanged;
@@ -303,6 +305,13 @@ namespace Pegelalarm.ViewModels
 
         public async void LoadMonitoredStations()
         {
+            if (DisplayedStations == null)
+            {
+                MonitoredStations = null;
+                NotifyOfPropertyChange(() => MonitoredStations);
+                return;
+            }
+
             var stations = await GlobalSettings.Instance.GetMonitoredStations();
             var list = new List<UIMonitoredStation>();
             foreach (var st in stations)

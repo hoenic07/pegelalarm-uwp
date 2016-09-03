@@ -133,6 +133,7 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
                                     <Rectangle Grid.Row="0" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="Green"/>
@@ -141,8 +142,10 @@
                                     <TextBlock Grid.Row="1" Grid.Column="1" Text="Alarmgrenze" TextWrapping="Wrap"/>
                                     <Rectangle Grid.Row="2" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="Red"/>
                                     <TextBlock Grid.Row="2" Grid.Column="1" Text="Regionale oder Nationale Überflutungen" TextWrapping="Wrap"/>
-                                    <Rectangle Grid.Row="3" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="Gray"/>
+                                    <Rectangle Grid.Row="3" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="Blue"/>
                                     <TextBlock Grid.Row="3" Grid.Column="1" Text="Unbekannt" TextWrapping="Wrap"/>
+                                    <Rectangle Grid.Row="4" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="Gray"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" Text="Keine aktuellen Daten" TextWrapping="Wrap"/>
                                 </Grid>
                             </Flyout>
                         </Button.Flyout>

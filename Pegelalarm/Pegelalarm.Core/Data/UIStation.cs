@@ -28,6 +28,8 @@ namespace Pegelalarm.Core.Data
         {
             get
             {
+                if (Data.data.All(d => d.IsOutOfDate)) return "Keine aktuellen Daten";
+
                 switch (Data.situation)
                 {
                     case 50: return "Nationale Überflutungen";
@@ -74,10 +76,11 @@ namespace Pegelalarm.Core.Data
                     case -10:
                         c = Colors.Green; break;
                     case 100:
-                    case -100:
-                        c = Colors.Gray; break;
-                        //TODO: Out of date?
+                        c = Colors.Blue; break;
                 }
+
+                if (Data.data.All(d => d.IsOutOfDate)) c = Colors.Gray;
+
                 return new SolidColorBrush(c);
             }
         }

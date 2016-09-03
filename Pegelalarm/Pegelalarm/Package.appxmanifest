@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="38298hoenic07.Pegelalarm" Publisher="CN=6E41B677-83E8-44E8-BE75-0A11DF3ED5E2" Version="1.1.1.0" />
+  <Identity Name="38298hoenic07.Pegelalarm" Publisher="CN=6E41B677-83E8-44E8-BE75-0A11DF3ED5E2" Version="1.1.5.0" />
   <mp:PhoneIdentity PhoneProductId="5f2c0b0c-cc6f-4bc2-9056-b91afc9370c7" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>PegelAlarm</DisplayName>
+    <DisplayName>PegelAlarm Hochwasser-Warner</DisplayName>
     <PublisherDisplayName>rwrApps</PublisherDisplayName>
     <Logo>Assets\NewStoreLogo.png</Logo>
   </Properties>

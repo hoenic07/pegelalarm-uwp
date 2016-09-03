@@ -77,6 +77,16 @@ namespace Pegelalarm.Core.Network.Data
             }
         }
 
+        public bool IsOutOfDate
+        {
+            get
+            {
+                if (sourceDate == null) return true;
+                var date = sourceDate.DateFromString();
+                return (DateTime.Now - date).TotalHours > 6;
+            }
+        }
+
         public float value { get; set; }
         public string requestDate { get; set; }
         public string sourceDate { get; set; }

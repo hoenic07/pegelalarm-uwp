@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -14,6 +15,8 @@ namespace Pegelalarm.Core.Persistance
     {
 
         private Dictionary<string, object> _defaultValues;
+
+        private Mutex stationMutex = new Mutex();
 
         private static GlobalSettings _instance;
 
@@ -171,13 +174,18 @@ namespace Pegelalarm.Core.Persistance
 
         public async Task<List<Alarm>> GetMonitoredStations()
         {
+            stationMutex.WaitOne();
             var st = await GetFromFile<List<Alarm>>("m_stations");
-            return st ?? new List<Alarm>();
+            var a = st ?? new List<Alarm>();
+            stationMutex.ReleaseMutex();
+            return a;
         }
 
         public async Task SaveMonitoredStations(List<Alarm> stationIds)
         {
+            stationMutex.WaitOne();
             await SaveToFile("m_stations", stationIds);
+            stationMutex.ReleaseMutex();
         }
         
         #endregion
