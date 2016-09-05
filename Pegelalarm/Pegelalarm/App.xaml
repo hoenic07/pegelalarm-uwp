@@ -17,8 +17,20 @@
             <Color x:Key="DarkGreyColor">#333333</Color>
             <Color x:Key="MainColor">#FF3232</Color>
             <Color x:Key="DarkerMainColor">#BC143E</Color>
-            
+
             <SolidColorBrush x:Key="MainColorBursh" Color="{StaticResource MainColor}"/>
+
+            <!--Color Codes-->
+            <Color x:Key="RedColor">#E7411B</Color>
+            <Color x:Key="YellowColor">#FFDD05</Color>
+            <Color x:Key="GreenColor">#007F2F</Color>
+            <Color x:Key="BlueColor">#009FE3</Color>
+            <Color x:Key="GrayColor">#808080</Color>
+            <SolidColorBrush x:Key="RedColorBrush" Color="{StaticResource RedColor}"/>
+            <SolidColorBrush x:Key="YellowColorBrush" Color="{StaticResource YellowColor}"/>
+            <SolidColorBrush x:Key="GreenColorBrush" Color="{StaticResource GreenColor}"/>
+            <SolidColorBrush x:Key="BlueColorBrush" Color="{StaticResource BlueColor}"/>
+            <SolidColorBrush x:Key="GrayColorBrush" Color="{StaticResource GrayColor}"/>
 
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">

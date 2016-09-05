@@ -21,7 +21,9 @@
         </Grid.RowDefinitions>
 
         <!--Header-->
-        <TextBlock Text="{Binding Station.Data.name, FallbackValue='test'}" FontSize="25" TextWrapping="WrapWholeWords" />
+        <TextBlock FontSize="25" TextWrapping="WrapWholeWords" >
+            <Run Text="{Binding Station.Data.water}" /><Run Text=" / " /><Run Text="{Binding Station.Data.stationName}" />
+        </TextBlock>
 
         <!--Set alarm grid-->
         <Grid Grid.Row="1" DataContext="{Binding Alarm, Mode=OneWay}" Visibility="{Binding CanSetAlarm, Mode=OneWay, Converter={StaticResource BooleanVisibilityConverter}}">

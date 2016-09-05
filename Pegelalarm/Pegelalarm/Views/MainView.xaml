@@ -22,7 +22,7 @@
                 <Rectangle Width="10" Fill="{Binding SituationColor}"/>
 
                 <TextBlock Grid.Column="1" Margin="12,0" VerticalAlignment="Center">
-                    <Bold><Run Text="{Binding Data.name}" /></Bold>
+                    <Bold><Run Text="{Binding Data.water}" /><Run Text=" / " /><Run Text="{Binding Data.stationName}" /></Bold>
                     <LineBreak/>
                     <Run Text="{Binding SituationString}" FontSize="12"/>
                 </TextBlock>
@@ -52,7 +52,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="1" Margin="0,0,12,0" VerticalAlignment="Center">
-                    <Bold><Run Text="{Binding Data.name}" /></Bold> <LineBreak/>
+                    <Bold><Run Text="{Binding Data.water}" /><Run Text=" / " /><Run Text="{Binding Data.stationName}" /></Bold><LineBreak/>
                     <Run Text="Warnen bei"/> <Run Text="{Binding WaterKindStringPlain}"/>
                 </TextBlock>
 
@@ -115,7 +115,7 @@
                         </Button>
                     </StackPanel>
 
-                    <ToggleSwitch Margin="12,0,12,12" IsOn="{Binding AlarmNotificationsOn, Mode=TwoWay}" Header="Benachrichtungen für &#x0a;Alarm-Radius"/>
+                    <ToggleSwitch Margin="12,0,12,12" IsOn="{Binding AlarmNotificationsOn, Mode=TwoWay}" Header="Benachrichtungen für &#x0a;Alarmradius"/>
 
                     <Rectangle Height="2" Margin="0,6" Fill="{StaticResource MainColorBursh}"/>
 
@@ -136,15 +136,15 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
-                                    <Rectangle Grid.Row="0" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="Green"/>
-                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Normal, Warngrenze, Niedrigwasser" TextWrapping="Wrap"/>
-                                    <Rectangle Grid.Row="1" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="Yellow"/>
-                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="Alarmgrenze" TextWrapping="Wrap"/>
-                                    <Rectangle Grid.Row="2" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="Red"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="Regionale oder Nationale Überflutungen" TextWrapping="Wrap"/>
-                                    <Rectangle Grid.Row="3" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="Blue"/>
+                                    <Rectangle Grid.Row="0" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="{StaticResource GreenColorBrush}"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Normalbereich" TextWrapping="Wrap"/>
+                                    <Rectangle Grid.Row="1" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="{StaticResource YellowColorBrush}"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="Frühwarngrenze erreicht" TextWrapping="Wrap"/>
+                                    <Rectangle Grid.Row="2" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="{StaticResource RedColorBrush}"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="Alarmgrenze erreicht" TextWrapping="Wrap"/>
+                                    <Rectangle Grid.Row="3" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="{StaticResource BlueColorBrush}"/>
                                     <TextBlock Grid.Row="3" Grid.Column="1" Text="Unbekannt" TextWrapping="Wrap"/>
-                                    <Rectangle Grid.Row="4" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="Gray"/>
+                                    <Rectangle Grid.Row="4" Grid.Column="0" Width="20" Height="20" Margin="0,0,12,6" Fill="{StaticResource GrayColorBrush}"/>
                                     <TextBlock Grid.Row="4" Grid.Column="1" Text="Keine aktuellen Daten" TextWrapping="Wrap"/>
                                 </Grid>
                             </Flyout>
@@ -231,7 +231,7 @@
                         <TextBlock Text="Überwachte Stationen" VerticalAlignment="Center" Margin="12,0,0,0" FontWeight="Bold" FontSize="20"/>
                     </StackPanel>
 
-                    <TextBlock Grid.Row="1" Text="Für diese Stationen erhalten sie eine Benachrichtung, wenn der Alarmwert erreicht wird." Margin="12" TextWrapping="Wrap" Visibility="{Binding MonitoredStations, Converter={StaticResource CollectionVisibilityConverter}}"/>
+                    <TextBlock Grid.Row="1" Text="Für diese Stationen erhalten Sie eine Benachrichtung, wenn der Alarmwert erreicht wird." Margin="12" TextWrapping="Wrap" Visibility="{Binding MonitoredStations, Converter={StaticResource CollectionVisibilityConverter}}"/>
 
                     <ListView Grid.Row="2" ItemsSource="{Binding MonitoredStations}" ItemTemplate="{StaticResource MonitoredStationTemplate}">
                         <ListView.ItemContainerStyle>

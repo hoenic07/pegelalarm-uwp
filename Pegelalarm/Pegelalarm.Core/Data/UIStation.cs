@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
 namespace Pegelalarm.Core.Data
@@ -32,12 +33,13 @@ namespace Pegelalarm.Core.Data
 
                 switch (Data.situation)
                 {
-                    case 50: return "Nationale Überflutungen";
-                    case 40: return "Regionale Überflutungen";
-                    case 30: return "Alarmgrenze";
-                    case 20: return "Warngrenze";
-                    case 10: return "Normalwasser";
-                    case -10: return "Niedrigwasser";
+                    case 50: return "Alarmgrenze erreicht";
+                    case 40: return "Alarmgrenze erreicht";
+                    case 30: return "Frühwarngrenze erreicht";
+                    case 20:
+                    case 10: 
+                    case -10:
+                        return "Normalbereich";
                     case 100: return "Unbekannt";
                 }
                 return "Unbekannt";
@@ -53,35 +55,35 @@ namespace Pegelalarm.Core.Data
                     case 10: return "steigend";
                     case 0: return "gleichbleibend";
                     case -10: return "fallend";
-                    case 100: return "Unbekannt";
+                    case 100: return "unbekannt";
                 }
-                return "Unbekannt";
+                return "unbekannt";
             }
         }
 
-        public SolidColorBrush SituationColor
+        public Brush SituationColor
         {
             get
             {
-                var c = Colors.Gray;
+                var c = "Gray";
                 switch (Data.situation)
                 {
                     case 50:
                     case 40:
-                        c = Colors.Red; break;
+                        c = "Red"; break;
                     case 30:
-                        c = Colors.Yellow; break;
+                        c = "Yellow"; break;
                     case 20:
                     case 10:
                     case -10:
-                        c = Colors.Green; break;
+                        c = "Green"; break;
                     case 100:
-                        c = Colors.Blue; break;
+                        c = "Blue"; break;
                 }
 
-                if (Data.data.All(d => d.IsOutOfDate)) c = Colors.Gray;
+                if (Data.data.All(d => d.IsOutOfDate)) c = "Gray";
 
-                return new SolidColorBrush(c);
+                return (Brush)Application.Current.Resources[c+"ColorBrush"];
             }
         }
     }
