@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Controls.Maps;
 using Windows.ApplicationModel.Background;
 using Pegelalarm.Core.Persistance;
 using Windows.UI.Popups;
+using System.Diagnostics;
 
 namespace Pegelalarm.ViewModels
 {
@@ -209,18 +210,26 @@ namespace Pegelalarm.ViewModels
 
         public async void GetMyLocation()
         {
-            var res = await Geolocator.RequestAccessAsync();
+            try
+            {
+                var res = await Geolocator.RequestAccessAsync();
 
-            if (res == GeolocationAccessStatus.Allowed)
-            {
-                var pos = await locator.GetGeopositionAsync();
-                var p = pos.Coordinate;
-                view.ShowMapAt(p.Latitude, p.Longitude);
-                Location = new MapItem(p.Latitude, p.Longitude, MapItemKind.Location, null);
-                UpdateDisplayedStations();
+                if (res == GeolocationAccessStatus.Allowed)
+                {
+                    var pos = await locator.GetGeopositionAsync();
+                    var p = pos.Coordinate;
+                    view.ShowMapAt(p.Latitude, p.Longitude);
+                    Location = new MapItem(p.Latitude, p.Longitude, MapItemKind.Location, null);
+                    UpdateDisplayedStations();
+                }
+                else
+                {
+                    view.SetPositionOnMap();
+                }
             }
-            else
+            catch (Exception ex)
             {
+                Debug.WriteLine("Location > Error getting location. " + ex.Message);
                 view.SetPositionOnMap();
             }
         }

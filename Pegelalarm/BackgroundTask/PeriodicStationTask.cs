@@ -4,11 +4,8 @@ using Pegelalarm.Core.Network.Data;
 using Pegelalarm.Core.Persistance;
 using Pegelalarm.Core.Utils;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.Data.Xml.Dom;
 using Windows.Devices.Geolocation;
@@ -70,7 +67,7 @@ namespace BackgroundTask
                     if(monFlow.WaterKind==WaterKind.Highwater && flow.value >= monFlow.AlarmValue ||
                        monFlow.WaterKind == WaterKind.Lowwater && flow.value <= monFlow.AlarmValue)
                     {
-                        ShowToast($"{monFlow.WaterKindString}-Alarm!", $"{station.name}, {flow.value} {monFlow.MetricKindString}");
+                        ShowToast($"{monFlow.WaterKindStringPlain}-Alarm!", $"{station.water} / {station.stationName}, {flow.value} {monFlow.MetricKindString}", station.commonid);
                         continue;
                     }
                 }
@@ -80,42 +77,38 @@ namespace BackgroundTask
                     if (monHeight.WaterKind == WaterKind.Highwater && height.value >= monHeight.AlarmValue ||
                        monHeight.WaterKind == WaterKind.Lowwater && height.value <= monHeight.AlarmValue)
                     {
-                        ShowToast($"{monFlow.WaterKindString}-Alarm!", $"{station.name}, {flow.value} {monFlow.MetricKindString}");
+                        ShowToast($"{monHeight.WaterKindStringPlain}-Alarm!", $"{station.water} / {station.stationName}, {height.value} {monHeight.MetricKindString}", station.commonid);
                         continue;
                     }
                 }
 
                 if (isInAlarmRadius && station.situation != 100 && station.situation >= 20 && alarmNotify)
                 {
-                    ShowToast("Alarm!", station.name + " - " + uist.SituationString);
+                    ShowToast("Alarm!", $"{station.water} / {station.stationName} - {uist.SituationString}",station.commonid);
                     continue;
                 }
             }
 
-
             def.Complete();
         }
 
-        public void ShowToast(string header, string text)
+        public void ShowToast(string header, string text, string group)
         {
-            ToastTemplateType toastTemplate = ToastTemplateType.ToastText02;
-            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(toastTemplate);
+            var xml = $"<toast scenario='alarm'>  <visual>    <binding template='ToastGeneric'>      <text>{header}</text>      <text>{text}</text>    </binding>  </visual>  <actions>    <action      activationType='background'      arguments='dismiss'      content='Dismiss'/>  </actions></toast>";
 
-            XmlNodeList toastTextElements = toastXml.GetElementsByTagName("text");
-            toastTextElements[0].AppendChild(toastXml.CreateTextNode(header));
-            toastTextElements[1].AppendChild(toastXml.CreateTextNode(text));
+            try
+            {
+                var doc = new XmlDocument();
+                doc.LoadXml(xml);
 
-            IXmlNode toastNode = toastXml.SelectSingleNode("/toast");
-            ((XmlElement)toastNode).SetAttribute("duration", "long");
+                var t = new ToastNotification(doc);
+                t.Group = group;
+                ToastNotificationManager.CreateToastNotifier().Show(t);
+            }
+            catch(Exception ex)
+            {
 
-            ToastNotification toast = new ToastNotification(toastXml);
-
-            toast.Group = "pegelalarm";
-            ToastNotificationManager.History.RemoveGroup("pegelalarm");
-
-            toast.ExpirationTime = DateTimeOffset.UtcNow.AddSeconds(3600);
-
-            ToastNotificationManager.CreateToastNotifier().Show(toast);
+            }
         }
     }
 }

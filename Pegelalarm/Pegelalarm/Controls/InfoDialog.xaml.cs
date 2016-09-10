@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System;
@@ -23,6 +24,18 @@ namespace Pegelalarm.Controls
         public InfoDialog()
         {
             this.InitializeComponent();
+            this.DataContext = this;
+        }
+
+
+
+        public string Version
+        {
+            get
+            {
+                var v = Package.Current.Id.Version;
+                return $"{v.Major}.{v.Minor}.{v.Build}";
+            }
         }
 
         private void DataSource_Click(object sender, RoutedEventArgs e)
