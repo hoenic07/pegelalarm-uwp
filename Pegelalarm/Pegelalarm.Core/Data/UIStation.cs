@@ -94,5 +94,18 @@ namespace Pegelalarm.Core.Data
         public string MonitoredValueTypeString { get; set; }
         public double AlarmValue { get; set; }
         public string WaterKindStringPlain { get; set; }
+
+        public bool IsHighWaterAlarm { get; set; }
+
+        public new Brush SituationColor
+        {
+            get
+            {
+                var isAlarmReached = IsHighWaterAlarm ? MonitoredValue >= AlarmValue : MonitoredValue <= AlarmValue;
+                var c = (Brush)Application.Current.Resources[(isAlarmReached ? "Red":"Green")+"ColorBrush"];
+                return c;
+            }
+        }
+
     }
 }

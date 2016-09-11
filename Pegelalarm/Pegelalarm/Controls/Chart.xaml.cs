@@ -49,7 +49,7 @@ namespace Pegelalarm.Controls
         private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             if (samples == null || samples.Count == 0) return;
-            AlarmValueChanged?.Invoke(this, e.NewValue);
+            AlarmValueChanged?.Invoke(this, Slider.Value);
         }
 
         private void Chart_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -176,17 +176,18 @@ namespace Pegelalarm.Controls
 
             if (show)
             {
-                var val = warnValue > 0 ? warnValue : Slider.Maximum - 50;
+                var val = warnValue > 0 ? warnValue : (int)(Slider.Maximum / 2);
 
                 if (value != 0)
                 {
                     val = value;
                 }
-                else if (warnValue == 0)
-                {
-                    val = Slider.Maximum - 50;
-                }
 
+                if (Slider.Value == val)
+                {
+                    Slider_ValueChanged(Slider, null);
+                    return;
+                }
                 Slider.Value = val;
             }
 

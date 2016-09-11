@@ -71,5 +71,15 @@ namespace Pegelalarm
 
             DisplayRootView<MainView>();
         }
+
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            base.OnActivated(args);
+
+            if (args.Kind == ActivationKind.ToastNotification && args.PreviousExecutionState != ApplicationExecutionState.Running)
+            {
+                DisplayRootView<MainView>();
+            }
+        }
     }
 }

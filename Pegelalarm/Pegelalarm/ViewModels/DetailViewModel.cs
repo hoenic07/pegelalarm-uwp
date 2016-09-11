@@ -111,7 +111,7 @@ namespace Pegelalarm.ViewModels
             Metrics.Add(new Metric { Kind = MetricKind.Height, Name = "cm" });
             Metrics.Add(new Metric { Kind = MetricKind.Flow, Name = "m³/s" });
             SelectedMetric = Metrics[0];
-            alarmStorageDelayer = new Delayer(TimeSpan.FromSeconds(1.5));
+            alarmStorageDelayer = new Delayer(TimeSpan.FromSeconds(0.5));
             alarmStorageDelayer.Action += (a,b) => SaveAlarm();
         }
 

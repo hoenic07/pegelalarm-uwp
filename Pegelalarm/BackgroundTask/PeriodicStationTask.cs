@@ -46,8 +46,6 @@ namespace BackgroundTask
                 return;
             }
 
-            
-
             foreach (var station in allStations.Payload)
             {
                 var uist = new UIStation { Data = station };
@@ -94,7 +92,7 @@ namespace BackgroundTask
 
         public void ShowToast(string header, string text, string group)
         {
-            var xml = $"<toast scenario='alarm'>  <visual>    <binding template='ToastGeneric'>      <text>{header}</text>      <text>{text}</text>    </binding>  </visual>  <actions>    <action      activationType='background'      arguments='dismiss'      content='Dismiss'/>  </actions></toast>";
+            var xml = $"<toast scenario='alarm'>  <visual>    <binding template='ToastGeneric'>      <text>{header}</text>      <text>{text}</text>    </binding>  </visual>  <actions>    <action      activationType='background'      arguments='dismiss'      content='Schließen'/>  </actions></toast>";
 
             try
             {

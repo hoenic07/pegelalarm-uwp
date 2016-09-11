@@ -281,7 +281,7 @@ namespace Pegelalarm.ViewModels
 
         #region Methods
 
-        public async void UpdateDisplayedStations()
+        public async Task UpdateDisplayedStations()
         {
             SaveLocationData();
             if (Location == null) return;
@@ -309,10 +309,10 @@ namespace Pegelalarm.ViewModels
             }
             NotifyOfPropertyChange(() => DisplayedStations);
 
-            LoadMonitoredStations();
+            await LoadMonitoredStations();
         }
 
-        public async void LoadMonitoredStations()
+        public async Task LoadMonitoredStations()
         {
             if (DisplayedStations == null)
             {
@@ -334,6 +334,7 @@ namespace Pegelalarm.ViewModels
                     uimst.AlarmValue = st.AlarmValue;
                     uimst.MonitoredValueTypeString = st.MetricKindString;
                     uimst.MonitoredValue = sta.Data.data.FirstOrDefault(d => d.Metric == st.MetricKind)?.value ?? 0;
+                    uimst.IsHighWaterAlarm = st.WaterKind == WaterKind.Highwater;
                     list.Add(uimst);
                 }
             }
@@ -343,7 +344,7 @@ namespace Pegelalarm.ViewModels
 
         public async Task RegisterBackgroundTask()
         {
-            await Task.Delay(1000);
+            await Task.Delay(100);
             var taskRegistered = false;
             var exampleTaskName = "PeriodicStationTask";
 
